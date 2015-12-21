@@ -1,11 +1,10 @@
 /**
- * Opens boostrap modal with a mustache template.
+ * NodeSearcType form
  */
 define([
-    'mustache',
     'framework/Component/Neo4j/Transactions',
     'framework/Component/Neo4j/SimpleQueryLanguage',
-], function (Mustache, Transactions, SimpleQueryLanguage) {
+], function (Transactions, SimpleQueryLanguage) {
 'use strict';
 
     // templates
@@ -23,6 +22,24 @@ define([
                 var text = $(input).val();
                 _self.search(text);
             });
+            
+            // typeahead binding
+            $(input).typeahead({
+                autoSelect: true,
+                multiple: true,
+                source: [
+                    {
+                        id:     ":Person",
+                        name:   ":Person",
+                    }, {
+                        id:     ":Specialty",
+                        name:   ":Page",
+                    }, {
+                        id: "name=",
+                        name: "name=",
+                    }
+                ]
+            });
         },
 
         /**
@@ -38,12 +55,20 @@ define([
         search: function (text) {
             // create query string from SimpleQueryLanguage
             var queryString = SimpleQueryLanguage.translate(text);
-            
+
             var transactions = new Transactions();
             transactions.add(queryString, {});
 
             $(form).trigger('node:search:submit', [transactions]);
 
+            return this;
+        },
+
+        /**
+         * Submit the form.
+         */
+        submit: function () {
+            $(form).trigger('submit');
             return this;
         },
 

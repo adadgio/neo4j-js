@@ -26,10 +26,16 @@ define([
             height:     $(selector).outerHeight(),
             selector:   selector,
             components: {
-                cursor: false,
+                cursor:   false,
+                dragline: false,
+            },
+            events: {
+                dragstartPosition:  {x:0, y:0},
+                dragPosition:       {x:0, y:0},
+                dragendPosition:    {x:0, y:0},
             },
             state: {
-                create: false,
+                create:         false,
                 draggedElement: false,
                 preventDrag:    false,
             },
@@ -37,7 +43,7 @@ define([
                 GraphUtilities.tick(_g.node, _g.link);
             },
         };
-        
+
         /**
          * Declare all important master graph elements
          */
@@ -45,6 +51,15 @@ define([
             .on('mouseup',   function () { GraphHandlers.graphOnMouseUp(_g, d3.mouse(this)); })
             .on('mousedown', function () { GraphHandlers.graphOnMouseDown(_g, d3.mouse(this)); })
             .on('mousemove', function () {
+                _g.events.dragPosition.x = d3.mouse(this)[0];
+                _g.events.dragPosition.y = d3.mouse(this)[1];
+
+                // reposition dragline
+                var mouse = d3.mouse(this);
+                var coords = {x: mouse[0] - 1, y: mouse[1] - 1};
+
+                _g.components.dragline
+                    .attr('d', 'M' + 5 + ',' + 5 + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
                 // move the cursor on the graph when it is enabled
                 if (_g.components.cursor !== false) {
                     _g.components.cursor.attr("transform", "translate(" + d3.mouse(this) + ")");
@@ -62,6 +77,8 @@ define([
         _g.node  = _g.svg.selectAll(".node", function (d) { return d._id; });
         _g.gnode = _g.svg.selectAll(".gnode");
 
+        _g.components.dragline = GraphComponents.create('Dragline', _g);
+
         // differentiate dblclick an click events
         var down,
             tolerance = 5,
@@ -78,27 +95,29 @@ define([
         //     ],
         // }
 
-        // function tick() {
-        //     link.attr("x1", function(d) { return d.source.x; })
-        //             .attr("y1", function(d) { return d.source.y; })
-        //             .attr("x2", function(d) { return d.target.x; })
-        //             .attr("y2", function(d) { return d.target.y; });
-        //
-        //     node.attr("transform", function (d) {
-        //         return 'translate(' + [d.x, d.y] + ')';
-        //     });
-        // }
-
         _g.force
             .drag()
             // .origin(function(d) { return {x: d.x, y: d.y}; })
             .on('dragstart', function (d) {
                 _g.draggedElement = this;
 
+                // save first mouse position
+                _g.events.dragstartPosition = _g.events.dragPosition;
+
+            }).on('drag', function (d) {
+                // id currently dragging and in create mode, prevent
+                // new nodes to be added when mouse event id down/up
+
             }).on('dragend', function (d) {
                 // reset the dragged element (no element is beeing dragged)
                 _g.draggedElement = false;
 
+                // reset the can add node variables of the create mode when drag is finished
+
+                // save end mouse position
+                _g.events.dragendPosition = _g.events.dragPosition;
+                console.log(_g.events.dragendPosition);
+                
                 if (_g.state.preventDrag === false) {
                     d3.select(this).classed('fixed', d.fixed = true);
                 }
@@ -225,19 +244,39 @@ define([
             _g.link  = _g.link.data(_g.links);
             _g.node  = _g.node.data(_g.nodes, function (d) { return d._id; });
 
-            _g.link.enter().append("line")
-                .attr("class", "link")
-                .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+            _g.link.enter().append('line')
+                .attr('class', 'link')
+                .style('stroke-width', function(d) { return Math.sqrt(d.value); });
 
             _g.gnodes = _g.node.enter().append("g")
                 .attr('class', 'gnode')
+                .on('mouseover', function (d){
+                    // on hover, never display the cursor of the create mode
+                    if (_g.state.create === true) {
+                        _g.components.cursor.classed('hidden', true);
+                    }
+                })
+                .on('mouseout', function (d) {
+                    if (_g.state.create === true) {
+                        _g.components.cursor.classed('hidden', false);
+                    }
+                })
                 .on('mousedown', function (d) {
+                    if (_g.state.create === true) {
+                        // prevent the drag method to be fired
+                        d3.event.stopPropagation();
+                        return;
+                    }
                     down = d3.mouse(document.body);
                     last = +new Date();
                     _g.state.preventDrag = true;
-                    _g.svg.selectAll(".gnode").classed('selected', false); // remove all nodes selected class
+                    _g.svg.selectAll('.gnode').classed('selected', false); // remove all nodes selected class
                 })
                 .on('mouseup', function (d) {
+                    if (_g.state.create === true) {
+                        // then prevent simple clicks on node
+                        return;
+                    }
                     var element = d3.select(this);
                     // if (d3.event.defaultPrevented) {
                     //
@@ -284,8 +323,8 @@ define([
                 .attr("r", 20)
             ;
 
-            _g.gnodes.append("text")
-                .attr("class", "txt")
+            _g.gnodes.append('text')
+                .attr('class', 'label')
                 .text(function(d) {
                     var idField  = Mapping.graph._id;
                     var prop = Mapping.graph.primaryLabel;
@@ -303,6 +342,7 @@ define([
 
         /**
          * Happens when right clicking on a graph node.
+         * @todo Unused at the moment
          */
         _self.onRightClick = function () {
             d3.event.preventDefault();
@@ -315,16 +355,17 @@ define([
             $('a[data-toggle="create-mode"]').unbind('click').bind('click', function (e) {
                 var mode = $(this).attr('data-mode');
                 e.preventDefault();
-                if (mode === "off") {
-                    $(this).find("i").removeClass("fa-rotate-180");
-                    $(this).attr("data-mode", "on");
+
+                if (mode === 'off') {
+                    $(this).find('i').removeClass('fa-rotate-180');
+                    $(this).attr('data-mode', 'on');
                     _self.enableCreateMode();
-                } else if (mode === "on") {
-                    $(this).attr("data-mode", "off");
-                    $(this).find("i").addClass("fa-rotate-180");
+                } else if (mode === 'on') {
+                    $(this).attr('data-mode', 'off');
+                    $(this).find('i').addClass('fa-rotate-180');
                     _self.disableCreateMode();
                 } else {
-                    // yeah, error occured
+                    // yeah, error occured, but practically impossible
                 }
             });
         };
@@ -363,7 +404,7 @@ define([
         /**
          * Initialiser everything.
          */
-        _self.element = $(_g.selector);
+        _self.$ = $(_g.selector);
 
         return _self;
     };

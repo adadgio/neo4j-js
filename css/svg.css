@@ -1,0 +1,36 @@
+/**
+ * svg.css
+ */
+div.map-container {
+    min-height: 480px;
+    position: relative;
+}
+
+div.map-container > svg.map {
+    position: absolute;
+    width: 100%;
+    height: 100%; /* Calculated by javascript */
+}
+
+circle.cursor {
+    fill: none;
+    stroke: #ABB1BB;
+    stroke-width: 1.4px;
+}
+
+rect.trasharea {
+    fill: #1E1F24; /* black */
+}
+rect.trasharea.active {
+    fill: red;
+}
+text.trashico {
+    fill: #3E4254;
+    font-size: 19px;
+}
+
+path.dragline {
+    fill: red;
+    stroke: red;
+    stroke-width: 2px;
+}

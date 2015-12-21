@@ -1,0 +1,53 @@
+/**
+ * nodes.css (circles and gnode)
+ */
+g.gnode {
+    cursor: grab;
+    cursor: -webkit-grab;
+    cursor:-moz-grab;
+}
+
+.dragged {
+    pointer-events: none;
+}
+
+circle.node {
+    fill: #1E1F24; /* black */
+    stroke: #6D7075; /* light black */
+    stroke-width: 2px;
+}
+
+/** node colors **/
+circle.node.red {
+    fill: #FF756E;
+}
+circle.node.blue {
+    fill: #68BDF6;
+    stroke: #5CA8DB;
+}
+circle.node.violet {
+    fill: #DE9BF9;
+}
+circle.node.green {
+    fill: #6DCE9E;
+}
+circle.node.yellow {
+    fill: #FFD86E;
+}
+circle.node.blue {
+    fill: #68BDF6;
+    stroke: #5CA8DB;
+}
+
+text.label {
+    fill: #fff;
+    font-size: 9px;
+}
+
+/* Actions, modifications and overridings */
+g.gnode.fixed > circle.node {
+    stroke: #fdcc59;
+}
+g.gnode.selected > circle.node {
+    fill: red !important;
+}

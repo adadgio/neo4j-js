@@ -11,47 +11,45 @@
     <link rel="stylesheet" href="css/bootstrap.night.css" />
     <link rel="stylesheet" href="css/bootstrap.theme.css" />
     <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/svg.css" />
+    <link rel="stylesheet" href="css/nodes.css" />
+    <link rel="stylesheet" href="css/links.css" />
 
     <script data-main="js/AppKernel.js" src="js/lib/require-2.1.16.min.js"></script>
 </head>
 <body>
-
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a href="" class="navbar-brand">Neo4j JS</a>
-          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
+            <a href="" class="navbar-brand">Neo4j JS</a>
+            <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
-          <ul class="nav navbar-nav">
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Themes <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="themes">
-                <li><a href="../default/">Default</a></li>
-                <li class="divider"></li>
-                <li><a href="../cerulean/">Cerulean</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">Darkly <span class="caret"></span></a>
-              <ul class="dropdown-menu" aria-labelledby="download">
-                <li><a href="http://jsfiddle.net/bootswatch/1172d9hh/">Open Sandbox</a></li>
-                <li class="divider"></li>
-                <li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
-                <li><a href="./bootstrap.css">bootstrap.css</a></li>
-              </ul>
-            </li>
-          </ul>
-
-          <ul class="nav navbar-nav navbar-right">
-            <li><a class="btn btn-danger" href="#">qsdsd</a></li>
-            <li><a href="#" >qsdqd</a></li>
-          </ul>
-
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Themes <span class="caret"></span></a>
+                    <ul class="dropdown-menu" aria-labelledby="themes">
+                        <li><a href="#">Default</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">qsdqsd</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#" data-toggle="modal" data-modal="">Graph settings</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Help</a></li>
+                        <li><a href="#">View on Github</a></li>
+                    </ul>
+                </li>
+            </ul>
         </div>
       </div>
     </div>
@@ -82,7 +80,7 @@
                                         <span class="input-group-btn">
                                             <button class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
                                         </span>
-                                        <input value=":Person" class="form-control input-sm" type="text" name="s" placeholder=":Label property=value" autocomplete="off" />
+                                        <input value="" class="form-control input-sm" type="text" name="s" placeholder=":Label property=value" autocomplete="off" />
                                     </div>
                                 </div>
                                 <div class="col-xs-1">

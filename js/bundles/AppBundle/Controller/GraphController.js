@@ -2,24 +2,23 @@
  * @namespace \bundles\AppBundle\Controller\
  */
 define([
-    'mustache',
-    'framework/Config/GlobalConfig',
     'framework/Component/Neo4j/Client',
     'framework/Component/Neo4j/Transactions',
     'framework/Component/Neo4j/NodeFactory',
     'framework/Component/Neo4j/RelationshipFactory',
+    'bundles/AppBundle/Resources/Config/Mapping',
     'bundles/AppBundle/Component/Form/NodeType',
     'bundles/AppBundle/Component/Form/NodeSearchType',
     'bundles/AppBundle/Component/Graph/Graph',
-], function (Mustache, GlobalConfig, Neo4jClient, Transactions, NodeFactory, RelationshipFactory, NodeType, NodeSearchType, Graph) {
+], function (Neo4jClient, Transactions, NodeFactory, RelationshipFactory, Mapping, NodeType, NodeSearchType, Graph) {
 'use strict';
 
-    var client = new Neo4jClient({
-        apiEndpoint: "http://127.0.0.1:7474/db/data",
-        authBasic:   "Basic bmVvNGo6ZnJlbmNoZnJvZw==",
-    });
+    var graph = new Graph('svg#map');
 
-    var graph = new Graph("svg#map");
+    var client = new Neo4jClient({
+        apiEndpoint: Mapping.client.apiEndpoint,
+        authBasic:   Mapping.client.authBasic,
+    });
 
     return {
         /**
@@ -34,6 +33,9 @@ define([
 
             // bind event listeners
             this.addEventListeners();
+
+            // @todo To remove later
+            // NodeSearchType.submit();
         },
 
         /**
@@ -43,15 +45,15 @@ define([
             var _self = this,
                 modal = $('div#modal');
 
-            graph.element.on('node:click', function (e, d) {
+            graph.$.on('node:click', function (e, d) {
                 _self.onNodeClick(d._id);
             });
 
-            graph.element.on('node:dblclick', function (e, d) {
+            graph.$.on('node:dblclick', function (e, d) {
                 _self.onNodeExpand(d._id);
             });
 
-            graph.element.on('node:create:promise', function (e, coordinates) {
+            graph.$.on('node:create:promise', function (e, coordinates) {
                 _self.onNodeCreatePromise(coordinates);
             });
 
@@ -77,7 +79,6 @@ define([
         onNodeClick: function (_id) {
             // the node id..
             var _self = this, transactions = new Transactions();
-
             transactions.add("MATCH (n) WHERE ID(n) = "+ _id +" RETURN n, ID(n) AS _id, labels(n) AS _labels");
 
             client.commit(transactions, function (resultSet) {
@@ -125,7 +126,7 @@ define([
          */
         onNodeCreatePromise: function (coordinates) {
             var _self = this;
-            
+
             // create a new node using the factory with no _id, no _labels and no _properties
             var node = NodeFactory.createNode(null, ["Hey","Joe"], {blugr:"kjq"});
             var transactions = NodeType.getTransactions(node);

@@ -7,19 +7,23 @@ require.config({
     // enforceDefine: true, // helps prevent IE8 unwanted behavior, but not sure...
     urlArgs: 'v=' + (new Date()).getTime(), // helps refreshing assets loader during development
     paths: {
-        jquery   : "lib/jquery-1.11.2.min",
-        jqueryext: "lib/jquery-extensions/jquery-ext",
-        bootstrap: "lib/bootstrap.min",
-        typeahead: "lib/bootstrap3-typeahead.min",
-        mustache:  "lib/handlebars-v4.0.5",
-        text:      "lib/require-txt",
-        d3js:      "lib/d3.v3",
+        d3js:       "lib/d3.v3",
+        jquery   :  "lib/jquery-1.11.2.min",
+        bootstrap:  "lib/bootstrap.min",
+        typeahead:  "lib/bootstrap-typeahead.min",
+        handlebars: "lib/handlebars-v4.0.5",
+
+        jqueryext:  "lib/ext/jquery.ext",
+        templating: "lib/ext/handlebars.ext",
+        //requiretxt:  "lib/ext/requiretxt.ext",
+
         /* Your bundles here | contain minimum 2 letters */
         AppBundle:  "bundles/AppBundle",
     },
     shim: {
-        "jqueryext": { "deps": ["jquery"] },
-        "bootstrap": { "deps": ["jqueryext", "typeahead"] },
+        "jqueryext":  { "deps": ["jquery"] },
+        "bootstrap":  { "deps": ["jqueryext", "typeahead"] },
+        "templating": { "deps": ["handlebars"] },
     },
 });
 

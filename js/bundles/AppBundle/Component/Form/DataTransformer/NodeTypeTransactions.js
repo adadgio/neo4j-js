@@ -1,5 +1,5 @@
 /**
- * Opens boostrap modal with a mustache template.
+ * Deduces which transactions to make from the NodeType form
  */
 define([
     'framework/Component/Neo4j/Transactions',
@@ -67,7 +67,7 @@ define([
             if (node._labels.length > 0) {
                 query += " SET n:" + node._labels.join(':');
             }
-            
+
             // set normal properties
             if (Object.keys(node._properties).length > 0) {
                 params.props = node._properties;

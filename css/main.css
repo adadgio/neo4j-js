@@ -6,101 +6,10 @@ body {
     padding-top: 85px;
 }
 
-.nid {
-    color: gray;
-}
-
 .hidden {
     display: none;
 }
 
 a:hover {
     color: #17B38B;
-}
-
-div.map-container {
-    min-height: 480px;
-    position: relative;
-}
-
-div.map-container svg.map {
-    position: absolute;
-    width: 100%;
-    height: 100%; /* Calculated by javascript */
-}
-
-.trash {
-    fill: #1E1F24; /* black */
-}
-
-circle.cursor {
-    fill: none;
-    stroke: #ABB1BB;
-    stroke-width: 1.4px;
-}
-
-g.gnode {
-    cursor: grab;
-    cursor: -webkit-grab;
-    cursor:-moz-grab;
-}
-
-line.link {
-    cursor: pointer;
-    stroke: #ABB1BB;
-    stroke-width: 1.2px;
-}
-
-text.trash-ico {
-    fill: #3E4254;
-    font-size: 19px;
-}
-
-.dragged {
-    pointer-events: none;
-}
-
-.hovered {
-    color: white;
-    fill: #101010;
-}
-
-circle.node {
-    fill: #1E1F24; /* black */
-    stroke: #6D7075; /* light black */
-    stroke-width: 2px;
-}
-g.gnode.fixed circle.node {
-    stroke: #fdcc59; /* Nonono.. need another wrapper cirle AROUND the circle */
-}
-
-.txt {
-    fill: #fff;
-    font-size: 9px;
-}
-
-/** colors **/
-circle.node.red {
-    fill: #FF756E;
-}
-circle.node.blue {
-    fill: #68BDF6;
-    stroke: #5CA8DB;
-}
-circle.node.violet {
-    fill: #DE9BF9;
-}
-circle.node.green {
-    fill: #6DCE9E;
-}
-circle.node.yellow {
-    fill: #FFD86E;
-}
-circle.node.blue {
-    fill: #68BDF6;
-    stroke: #5CA8DB;
-}
-
-g.gnode.selected > circle.node {
-    fill: red !important;
 }

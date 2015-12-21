@@ -1,26 +1,13 @@
 /**
- * Opens boostrap modal with a mustache template.
+ * NodeType form.
  */
 define([
-    'mustache',
+    'templating',
     'framework/Component/Neo4j/NodeFactory',
     'bundles/AppBundle/Resources/Config/Mapping',
     'bundles/AppBundle/Component/Form/DataTransformer/NodeTypeTransactions'
-], function (Mustache, NodeFactory, Mapping, NodeTypeTransactions) {
-'use strict;';
-
-    Mustache.registerHelper('ifCond', function(a, b, options) {
-        if(a === b) {
-            return options.fn(this);
-        }
-        return options.inverse(this);
-    });
-    Mustache.registerHelper('ifIn', function(elem, list, options) {
-        if (list.indexOf(elem) > -1) {
-            return options.fn(this);
-        }
-        return options.inverse(this);
-    });
+], function (Templating, NodeFactory, Mapping, NodeTypeTransactions) {
+'use strict';
 
     var _id  = null;
     var node = {};
@@ -59,7 +46,7 @@ define([
         getData: function () {
             return $(form).serializeArray();
         },
-        
+
         /**
          * Get element of a form
          * @param string   Where to render the template
@@ -72,7 +59,7 @@ define([
             $(loader).removeClass('hidden');
 
             $.get(template, function(data) {
-                var template = Mustache.compile(data);
+                var template = Templating.compile(data);
                 var html = template({node: node, mappedProperties: Mapping.node.properties, mappedLabels: Mapping.node.labels});
 
                 $(selector).html(html);
@@ -97,7 +84,7 @@ define([
             $(loader).removeClass('hidden');
 
             $.get('templates/form/node_property.tpl', function(data) {
-                var template = Mustache.compile(data);
+                var template = Templating.compile(data);
                 var html = template({index: index,  mappedProperties: Mapping.node.properties});
 
                 $(properties).append(html);

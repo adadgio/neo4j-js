@@ -4,18 +4,22 @@
 define(function () {
 'use strict';
     return {
+        client: {
+            apiEndpoint: "http://127.0.0.1:7474/db/data",
+            authBasic:   "Basic bmVvNGo6ZnJlbmNoZnJvZw==",
+        },
         node: {
             _id: '_id',
             _labels: '_labels',
-            labels: ['Truc','Machin','Person', 'Bidule'],
+            labels: ['Specialty', 'Page', 'Profesion', 'Document'],
             properties: {
                 id: 'integer',
                 name: 'string',
-                bidule: 'chouette',
+                other: 'string',
             },
         },
         relationships: {
-            types: ['MY_TYPE','NOT_MY_TYPE'],
+            types: ['IS_RELATED','AD_TARGETS', 'IS_CHILD', 'LINKED_WITH'],
             properties: {
                 age: 'integer',
             }
@@ -26,11 +30,12 @@ define(function () {
             primaryLabel: 'name',
         },
         colors: {
-            Truc: 'green',
-            Machin: 'red',
-            Specialty: 'Orange',
-            Person: 'violet',
-            Page: 'green',
+            Truc:       'green',
+            Machin:     'red',
+            Specialty:  'orange',
+            Person:     'violet',
+            Page:       'green',
+            Document:   'gray',
         },
     };
 });

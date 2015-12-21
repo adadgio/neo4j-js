@@ -1,0 +1,370 @@
+/**
+ * @namespace bundles/AppBundle/Component/Graph
+ */
+define([
+    'd3js',
+    'bundles/AppBundle/Resources/Config/Mapping',
+    'framework/Component/Neo4j/NodeFactory',
+    'bundles/AppBundle/Component/Graph/GraphComponents',
+    'bundles/AppBundle/Component/Graph/GraphHandlers',
+    'bundles/AppBundle/Component/Graph/GraphUtilities',
+], function (d3, Mapping, NodeFactory, GraphComponents, GraphHandlers, GraphUtilities) {
+'use strict';
+
+    return function (selector) {
+        var _self = {};
+
+        var _g = {
+            svg:        null,
+            force:      null,
+            nodes:      [], // force.nodes()
+            links:      [], // force.links()
+            link:       null, //svg.selectAll(".link"),
+            node:       null, //svg.selectAll(".node", function (d) { return d._id; })
+            gnode:      null, // svg.selectAll(".gnode");
+            width:      $(selector).outerWidth(),
+            height:     $(selector).outerHeight(),
+            selector:   selector,
+            components: {
+                cursor: false,
+            },
+            state: {
+                create: false,
+                draggedElement: false,
+                preventDrag:    false,
+            },
+            tick: function () {
+                GraphUtilities.tick(_g.node, _g.link);
+            },
+        };
+        
+        /**
+         * Declare all important master graph elements
+         */
+        _g.svg = d3.select(selector)
+            .on('mouseup',   function () { GraphHandlers.graphOnMouseUp(_g, d3.mouse(this)); })
+            .on('mousedown', function () { GraphHandlers.graphOnMouseDown(_g, d3.mouse(this)); })
+            .on('mousemove', function () {
+                // move the cursor on the graph when it is enabled
+                if (_g.components.cursor !== false) {
+                    _g.components.cursor.attr("transform", "translate(" + d3.mouse(this) + ")");
+                }
+            });
+
+        _g.force = d3.layout.force()
+            .nodes([]).links([])
+            .charge(-200).linkDistance(80).size([_g.width, _g.height])
+            .on('tick', _g.tick);
+
+        _g.nodes = _g.force.nodes();
+        _g.links = _g.force.links();
+        _g.link  = _g.svg.selectAll(".link");
+        _g.node  = _g.svg.selectAll(".node", function (d) { return d._id; });
+        _g.gnode = _g.svg.selectAll(".gnode");
+
+        // differentiate dblclick an click events
+        var down,
+            tolerance = 5,
+            last,
+            wait = null;
+
+        // var graph = {
+        //     nodes: [
+        //         {x: 250, y: 200, _properties: {_id: 16, name:"yo"}, _id: null, _labels: []},
+        //         {x: 250, y: 200, _properties: {_id: 16, name:"yo"}, _id: null, _labels: []},
+        //     ],
+        //     links: [
+        //         { source: 0, target: 1 },
+        //     ],
+        // }
+
+        // function tick() {
+        //     link.attr("x1", function(d) { return d.source.x; })
+        //             .attr("y1", function(d) { return d.source.y; })
+        //             .attr("x2", function(d) { return d.target.x; })
+        //             .attr("y2", function(d) { return d.target.y; });
+        //
+        //     node.attr("transform", function (d) {
+        //         return 'translate(' + [d.x, d.y] + ')';
+        //     });
+        // }
+
+        _g.force
+            .drag()
+            // .origin(function(d) { return {x: d.x, y: d.y}; })
+            .on('dragstart', function (d) {
+                _g.draggedElement = this;
+
+            }).on('dragend', function (d) {
+                // reset the dragged element (no element is beeing dragged)
+                _g.draggedElement = false;
+
+                if (_g.state.preventDrag === false) {
+                    d3.select(this).classed('fixed', d.fixed = true);
+                }
+            });
+
+
+        /**
+         * Add a node to the graph.
+         * @param object A formatted node object from the NodeFactory
+         */
+        _self.addNode = function (node, update, coordinates) {
+            if (typeof(update) == 'undefined') { var update = true; };
+
+            // add x and y coordinates just to avoid bouging the graph too much (not required)
+            if (typeof(coordinates) === 'undefined') {
+                node.x = 200;
+                node.y = 250;
+            } else {
+                node.x = parseInt(coordinates.x);
+                node.y = parseInt(coordinates.y);
+            }
+
+            // check that the node does no alreay exists ! ;-)
+            var needle = _self.findNodeById(node._id);
+            if (needle) {
+                return false;
+            }
+
+            // add the nodes to the graph
+            _g.nodes.push(node);
+
+            if (true === update) {
+                _self.update();
+            }
+
+            return true;
+        };
+
+        /**
+         * Add a node to the graph.
+         * @param object A formatted node object from the NodeFactory
+         */
+        _self.updateNode = function (node, update) {
+            if (typeof(update) == 'undefined') { var update = true; };
+
+            // get existing node
+            var needle = _self.findNodeById(node._id);
+            if (false === needle) {
+                return false;
+            }
+
+            _self.removeNodeByIndex(needle.index);
+
+            _g.nodes.push(node);
+
+            if (true === update) {
+                _self.update();
+            }
+
+            return true;
+        };
+
+        /**
+         * Add a node to the graph.
+         * @param object A formatted node object from the NodeFactory
+         */
+        _self.removeNodeByIndex = function (index, update) {
+            if (typeof(update) == 'undefined') {
+                var update = true;
+            }
+
+            _g.nodes.splice(index, 1); // remove node
+
+            if (true === update) {
+                _self.update();
+            }
+
+            return true;
+        };
+
+        /**
+         * Find a node by real _id in the Graph nodes list
+         */
+        _self.findNodeById = function (_id) {
+            for (var i=0; i < _g.nodes.length; i++) {
+                if (parseInt(_g.nodes[i]._id) === parseInt(_id)) {
+                    return {index: i, node: _g.nodes[i]};
+                }
+            }
+
+            return false;
+        }
+
+        /**
+         * Add a node to the graph.
+         * @param object A formatted node object from the NodeFactory
+         */
+        _self.addLink = function (relationship) {
+            // find both nodes
+            var sourceNeedle = _self.findNodeById(relationship._source._id);
+            var targetNeedle = _self.findNodeById(relationship._target._id);
+
+            // if target node does not exist we need to add it !
+            if (!targetNeedle) {
+                _self.addNode(relationship._target, true);
+                targetNeedle = _self.findNodeById(relationship._target._id);
+            }
+
+            var link = {
+                source: sourceNeedle.index,
+                target: targetNeedle.index,
+            };
+
+            _g.links.push(link);
+            _self.update();
+
+            return true;
+        };
+
+        /**
+         * Update and refresh the whole graph.
+         */
+        _self.update = function () {
+            _g.link  = _g.link.data(_g.links);
+            _g.node  = _g.node.data(_g.nodes, function (d) { return d._id; });
+
+            _g.link.enter().append("line")
+                .attr("class", "link")
+                .style("stroke-width", function(d) { return Math.sqrt(d.value); });
+
+            _g.gnodes = _g.node.enter().append("g")
+                .attr('class', 'gnode')
+                .on('mousedown', function (d) {
+                    down = d3.mouse(document.body);
+                    last = +new Date();
+                    _g.state.preventDrag = true;
+                    _g.svg.selectAll(".gnode").classed('selected', false); // remove all nodes selected class
+                })
+                .on('mouseup', function (d) {
+                    var element = d3.select(this);
+                    // if (d3.event.defaultPrevented) {
+                    //
+                    // }
+                    if (GraphUtilities.distance(down, d3.mouse(document.body)) > tolerance) {
+                        _g.state.preventDrag = false;
+                        return;
+                    } else {
+                        if (wait) {
+                            window.clearTimeout(wait);
+                            wait = null;
+                            $(_g.selector).trigger('node:dblclick', [d]);
+                        } else {
+                            wait = window.setTimeout((function(e) {
+                                return function() {
+                                    $(_g.selector).trigger('node:click', [d]);
+                                    // set selected node
+                                    element.classed('selected', true);
+                                    wait = null;
+                                };
+                            })(d3.event), 300);
+                        }
+                    }
+                })
+                .call(_g.force.drag)
+            ;
+
+            _g.link.exit().remove();
+            _g.node.exit().remove();
+
+            _g.gnodes.append("circle")
+                .attr("class", function (d) {
+                    var klass = "node";
+                    // find color
+                    if (d._labels.length > 0) {
+                        var firstLabel = d._labels[0];
+                        if (typeof(Mapping.colors[firstLabel]) !== 'undefined') {
+                            var color = Mapping.colors[firstLabel];
+                            klass += " "+color;
+                        }
+                    }
+                    return klass;
+                })
+                .attr("r", 20)
+            ;
+
+            _g.gnodes.append("text")
+                .attr("class", "txt")
+                .text(function(d) {
+                    var idField  = Mapping.graph._id;
+                    var prop = Mapping.graph.primaryLabel;
+
+                    return d._properties.name;
+                    // if (typeof(d._properties[prop]) === 'undefined') {
+                    //     return d[idField];
+                    // } else {
+                    //     return d._properties[prop];
+                    // }
+                });
+
+            _g.force.start();
+        };
+
+        /**
+         * Happens when right clicking on a graph node.
+         */
+        _self.onRightClick = function () {
+            d3.event.preventDefault();
+        };
+
+        /**
+         * Bind general UI elements
+         */
+        _self.bindInterface = function () {
+            $('a[data-toggle="create-mode"]').unbind('click').bind('click', function (e) {
+                var mode = $(this).attr('data-mode');
+                e.preventDefault();
+                if (mode === "off") {
+                    $(this).find("i").removeClass("fa-rotate-180");
+                    $(this).attr("data-mode", "on");
+                    _self.enableCreateMode();
+                } else if (mode === "on") {
+                    $(this).attr("data-mode", "off");
+                    $(this).find("i").addClass("fa-rotate-180");
+                    _self.disableCreateMode();
+                } else {
+                    // yeah, error occured
+                }
+            });
+        };
+
+        /**
+         * Initialiser everything.
+         */
+        _self.init = function () {
+            _self.update();
+            _self.bindInterface();
+        };
+
+        /**
+         * Enable create mode ON
+         */
+        _self.enableCreateMode = function () {
+            _g.state.create = true;
+
+            // create a cursor element
+            _g.components.cursor = _g.svg.append("circle")
+                .attr("r", 30)
+                .attr("id", "cursor")
+                .attr("transform", "translate(-100,-100)")
+                .attr("class", "cursor");
+        }
+
+        /**
+         * Enable create mode ON
+         */
+        _self.disableCreateMode = function () {
+            _g.state.create = false;
+            _g.components.cursor.remove();
+            _g.components.cursor = false;
+        }
+
+        /**
+         * Initialiser everything.
+         */
+        _self.element = $(_g.selector);
+
+        return _self;
+    };
+});

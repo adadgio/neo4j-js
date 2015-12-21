@@ -1,0 +1,89 @@
+/**
+ * bootstrap.theme.css
+ */
+a, button, a:focus, button:focus, a:active, button:active {
+    outline: none !important;
+}
+
+.panel-header-help {
+    color: gray;
+    font-size: 0.8em;
+    margin-left: 0.3em;
+    display: inline-block;
+}
+
+.panel-body.no-padding {
+    padding: 0px !important;
+}
+
+.help {
+    color: gray;
+    font-size: 1em;
+    font-style: italic;
+}
+
+.input-xs { /* This does not exist in boostrap 3 :/ */
+    height: 23px;
+    padding: 6px 7px;
+    font-size: 12px;
+    line-height: 1.5em;
+    border-radius: 3px;
+}
+
+div.tooltip.top,
+div.tooltip.bottom,
+div.tooltip.right,
+div.tooltip.left {
+
+}
+
+div.tooltip.top div.tooltip-inner,
+div.tooltip.bottom div.tooltip-inner,
+div.tooltip.right div.tooltip-inner,
+div.tooltip.left div.tooltip-inner {
+    color: #E0E0E0;
+    font-size: 0.8em;
+    line-height: 1.4em;
+}
+
+div.separator {
+    height: 0px;
+    clear: both;
+    border-top: 1px solid #3d3d3d;
+    line-height: 1px;
+}
+
+span.panel-heading-loader {
+    float: right;
+    font-size: 1.3em;
+    color: #f39c12;
+    position: relative;
+    top: -0.1em;
+}
+
+.col-neutral {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+i.fa {
+
+}
+
+span.switch {
+    font-size: 1.2em;
+    line-height: 1.5em;
+}
+span.switch a i.fa-toggle-on {
+    color: #3498db;
+    font-size: 1.8em;
+    position: relative;
+    top: 5px;
+    left: 1px;
+    margin-right: 0.2em;
+}
+span.switch a i.fa-toggle-on.fa-rotate-180 {
+    color: #e74c3c;
+    top: 4px;
+    left: 0px;
+}

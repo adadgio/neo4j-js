@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neo4j &middot; JS Manager</title>
+
+    <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+    <link rel="stylesheet" href="css/font-awesome.min.css" />
+    <link rel="stylesheet" href="css/lib/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/bootstrap.night.css" />
+    <link rel="stylesheet" href="css/bootstrap.theme.css" />
+    <link rel="stylesheet" href="css/main.css" />
+
+    <script data-main="js/AppKernel.js" src="js/lib/require-2.1.16.min.js"></script>
+</head>
+<body>
+
+    <div class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <a href="" class="navbar-brand">Neo4j JS</a>
+          <button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#navbar-main">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </div>
+        <div class="navbar-collapse collapse" id="navbar-main">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="themes">Themes <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="themes">
+                <li><a href="../default/">Default</a></li>
+                <li class="divider"></li>
+                <li><a href="../cerulean/">Cerulean</a></li>
+              </ul>
+            </li>
+            <li class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#" id="download">Darkly <span class="caret"></span></a>
+              <ul class="dropdown-menu" aria-labelledby="download">
+                <li><a href="http://jsfiddle.net/bootswatch/1172d9hh/">Open Sandbox</a></li>
+                <li class="divider"></li>
+                <li><a href="./bootstrap.min.css">bootstrap.min.css</a></li>
+                <li><a href="./bootstrap.css">bootstrap.css</a></li>
+              </ul>
+            </li>
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right">
+            <li><a class="btn btn-danger" href="#">qsdsd</a></li>
+            <li><a href="#" >qsdqd</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+<div class="container-fluid" data-require="AppBundle:DefaultController">
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-heading-loader hidden" id="node-form-loader"><i class="fa fa-spinner fa-spin"></i></span>
+                    Edit node <span class="panel-header-help" id="nid"></span>
+                </div>
+                <div class="panel-body" id="node-form">
+                    <span class="help">Click on a node to edit it.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <form id="node-search" action="" method="get">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-xs-11">
+                                    <div class="input-group">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-primary btn-sm"><i class="fa fa-search"></i></button>
+                                        </span>
+                                        <input value=":Person" class="form-control input-sm" type="text" name="s" placeholder=":Label property=value" autocomplete="off" />
+                                    </div>
+                                </div>
+                                <div class="col-xs-1">
+                                    <input class="form-control input-sm text-center" type="text" name="limit" value="10" />
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                 </div>
+                <div class="panel-body no-padding">
+                    <div class="map-container" data-require="AppBundle:GraphController">
+                        <svg class="map" id="map"></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <p>
+                <span class="switch">
+                    <a href="" data-toggle="create-mode" data-mode="off" title="Toggle creation mode on/off (create nodes and relationships)" data-toggle="tooltip" data-placement="right"><i class="fa fa-toggle-on fa-rotate-180"></i></a> Create mode
+                </span>
+            </p>
+
+            <p class="paragraph">
+                Explain seomthing here
+            </p>
+            <p class="paragraph">
+                <a href="#" data-toggle="modal" data-target="#modal" data-template="templates/modal/create_node.tpl" title="Create node">OPEN</a>
+            </p>
+        </div>
+    </div>
+
+
+
+<div class="debug" id="debug"></div>
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalTitle"></div>
+
+</div>
+</body>
+</html>

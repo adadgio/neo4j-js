@@ -10,7 +10,7 @@ Check the first demo here :
 
 ## Installation
 ### Pre-requisites
-- Neo4j must be installed [Neo4jInstall instructions here](https://www.digitalocean.com/community/tutorials/how-to-install-neo4j-on-an-ubuntu-vps)
+- Neo4j must be installed [Neo4j quick install instructions here](https://www.digitalocean.com/community/tutorials/how-to-install-neo4j-on-an-ubuntu-vps)
 - Neo4j Basic Authentication must have been configured
 
 ### Quick configuration

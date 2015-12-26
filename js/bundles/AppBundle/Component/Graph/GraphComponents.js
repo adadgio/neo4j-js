@@ -30,7 +30,7 @@ define(function () {
                 .attr('class', 'dragline')
                 .attr('transform', "translate(100,100)")
                 .attr('d', 'M22,0L0,0');
-                
+
             dragline.hide = function () {
                 this.classed('hidden', true);
             }
@@ -39,6 +39,20 @@ define(function () {
             }
 
             return dragline;
+        },
+        
+        /**
+         * Creates the hidden drag line when linking two nodes
+         */
+        createCursor: function (_g) {
+            // line displayed when dragging new nodes
+            var cursor = _g.svg.append("circle")
+                .attr("r", 30)
+                .attr("id", "cursor")
+                .attr("transform", "translate(-100,-100)")
+                .attr("class", "cursor");
+
+            return cursor;
         },
 
         /**

@@ -14,7 +14,7 @@ define(function() {
             } else {
                 _id = parseInt(_id);
             }
-            
+
             var scalarProperties = {};
 
             for (var prop in properties) {
@@ -25,11 +25,11 @@ define(function() {
 
             var arrayLabels = [];
             for (var index in _labels) {
-                if (_labels.hasOwnProperty(index)) {
+                if (_labels.hasOwnProperty(index) && typeof(_labels[index]) === 'string') {
                     arrayLabels.push(_labels[index]);
                 }
             }
-
+            
             return {
                 _id: _id,
                 _labels: arrayLabels,

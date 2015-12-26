@@ -2,6 +2,12 @@
 
 A Neo4j graph database explorer and admin dashboard written in Javascript.
 
+## Coming soon !
+There is no stable branch yet, but one will be released soon !
+
+Check the first demo here : [Youtube Demo](https://youtu.be/kKJzLi-7p_U)
+
+
 ## Installation
 ### Pre-requisites
     - Neo4j must be installed [instructions here](http://digitzalocean/neo4J)

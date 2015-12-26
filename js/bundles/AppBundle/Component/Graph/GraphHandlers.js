@@ -12,6 +12,35 @@ define(function () {
         mouseDownUpTolerance: 150,
 
         /**
+         * Happens on key up
+         */
+        windowOnKeyUp: function (e, _g) {
+            _g.state.currentKeyPressed = false;
+
+            // fix all nodes
+            // @todo To keep what the user as dragged as fixed, select here only nodes that do not have the class "fixed" (easy)
+            _g.svg.selectAll('.gnode').classed('fixed', function (d) {  d.fixed = false; return false; });
+        },
+
+        /**
+         * Happens on key pressed
+         */
+        windowOnKeyDown: function (e, _g) {
+            if(d3.event.keyCode === 68) {
+                _g.state.currentKeyPressed = 'D'; // the "d" fro drag key was pressed
+
+                // enable drag events in that case ! :-)
+                _g.svg.selectAll('.gnode').classed('fixed', function (d) {  d.fixed = true; return true; });
+
+                // stop dragging capability, instead use dragging to create links ! :-)
+            }
+        },
+
+        draggingMode: function () {
+
+        },
+
+        /**
          * Happens when mouse id pressed on the svg graph
          */
         graphOnMouseUp: function (_g, mouse) {
@@ -39,7 +68,7 @@ define(function () {
                 .attr('r', 15)
                 .style('stroke', '#F2F2DC')
                 .style('stroke-width', '3px');
-                
+
             // start a timer
             mouseTimer = setInterval(function() {
                 if (clock >= $this.mouseDownUpTolerance) {
@@ -50,6 +79,10 @@ define(function () {
                 }
                 clock++;
             }, 1);
+
+            // dragline. on mouse down the dragline has a start position
+            _g.components.dragline
+                .attr('d', );
         },
 
         /**

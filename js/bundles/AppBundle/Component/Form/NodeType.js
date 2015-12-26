@@ -4,9 +4,8 @@
 define([
     'templating',
     'framework/Component/Neo4j/NodeFactory',
-    'bundles/AppBundle/Resources/Config/Mapping',
     'bundles/AppBundle/Component/Form/DataTransformer/NodeTypeTransactions'
-], function (Templating, NodeFactory, Mapping, NodeTypeTransactions) {
+], function (Templating, NodeFactory,NodeTypeTransactions) {
 'use strict';
 
     var _id  = null;
@@ -60,7 +59,7 @@ define([
 
             $.get(template, function(data) {
                 var template = Templating.compile(data);
-                var html = template({node: node, mappedProperties: Mapping.node.properties, mappedLabels: Mapping.node.labels});
+                var html = template({node: node, mappedProperties: Settings.graph.node.properties, mappedLabels: Settings.graph.label});
 
                 $(selector).html(html);
                 $(nid).text('[' + node._id + ']');
@@ -85,7 +84,7 @@ define([
 
             $.get('templates/form/node_property.tpl', function(data) {
                 var template = Templating.compile(data);
-                var html = template({index: index,  mappedProperties: Mapping.node.properties});
+                var html = template({index: index,  mappedProperties: Settings.graph.node.properties});
 
                 $(properties).append(html);
                 $(loader).addClass('hidden');

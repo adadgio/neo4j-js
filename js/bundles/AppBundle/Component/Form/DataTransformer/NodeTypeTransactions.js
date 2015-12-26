@@ -3,8 +3,7 @@
  */
 define([
     'framework/Component/Neo4j/Transactions',
-    'bundles/AppBundle/Resources/Config/Mapping'
-], function (Transactions, Mapping) {
+], function (Transactions) {
 
     return {
         /**
@@ -63,7 +62,7 @@ define([
             var query = "MATCH (n) WHERE ID(n) = " + parseInt(node._id);
 
             // delete and reset labels (first remove ALL label from the node, there is no ither way)
-            query += " REMOVE n:" + Mapping.node.labels.join(':');
+            query += " REMOVE n:" + Settings.graph.label.types.join(':');
             if (node._labels.length > 0) {
                 query += " SET n:" + node._labels.join(':');
             }

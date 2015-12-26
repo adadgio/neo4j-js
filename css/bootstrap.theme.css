@@ -18,8 +18,16 @@ a, button, a:focus, button:focus, a:active, button:active {
 
 .help {
     color: gray;
-    font-size: 1em;
-    font-style: italic;
+}
+
+.row.no-gutters {
+  margin-right: -5px;
+  margin-left: -5px;
+}
+.row.no-gutters > [class^="col-"],
+.row.no-gutters > [class*=" col-"] {
+  padding-right: 5px;
+  padding-left: 5px;
 }
 
 .input-xs { /* This does not exist in boostrap 3 :/ */
@@ -68,6 +76,10 @@ span.panel-heading-loader {
 
 i.fa {
 
+}
+
+p.paragraph {
+    margin: 1em 0;
 }
 
 span.switch {

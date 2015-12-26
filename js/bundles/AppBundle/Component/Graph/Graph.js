@@ -3,12 +3,11 @@
  */
 define([
     'd3js',
-    'bundles/AppBundle/Resources/Config/Mapping',
     'framework/Component/Neo4j/NodeFactory',
     'bundles/AppBundle/Component/Graph/GraphComponents',
     'bundles/AppBundle/Component/Graph/GraphHandlers',
     'bundles/AppBundle/Component/Graph/GraphUtilities',
-], function (d3, Mapping, NodeFactory, GraphComponents, GraphHandlers, GraphUtilities) {
+], function (d3, NodeFactory, GraphComponents, GraphHandlers, GraphUtilities) {
 'use strict';
 
     return function (selector) {
@@ -30,26 +29,35 @@ define([
                 dragline: false,
             },
             events: {
-                dragstartPosition:  {x:0, y:0},
-                dragPosition:       {x:0, y:0},
-                dragendPosition:    {x:0, y:0},
+                memory: {},
+                dragPosition:{x: 0, y: 0},
             },
             state: {
                 create:         false,
+                dragging:       true,
                 draggedElement: false,
                 preventDrag:    false,
+                currentKeyPressed: false,
             },
             tick: function () {
                 GraphUtilities.tick(_g.node, _g.link);
             },
         };
-
+        
         /**
          * Declare all important master graph elements
          */
+        d3.select(window)
+            .on('keyup', function (e) { GraphHandlers.windowOnKeyUp(e, _g); })
+            .on('keydown', function (e) { GraphHandlers.windowOnKeyDown(e, _g); });
+
         _g.svg = d3.select(selector)
-            .on('mouseup',   function () { GraphHandlers.graphOnMouseUp(_g, d3.mouse(this)); })
-            .on('mousedown', function () { GraphHandlers.graphOnMouseDown(_g, d3.mouse(this)); })
+            .on('mouseup',   function () {
+                GraphHandlers.graphOnMouseUp(_g, d3.mouse(this));
+            })
+            .on('mousedown', function () {
+                GraphHandlers.graphOnMouseDown(_g, d3.mouse(this));
+            })
             .on('mousemove', function () {
                 _g.events.dragPosition.x = d3.mouse(this)[0];
                 _g.events.dragPosition.y = d3.mouse(this)[1];
@@ -58,8 +66,11 @@ define([
                 var mouse = d3.mouse(this);
                 var coords = {x: mouse[0] - 1, y: mouse[1] - 1};
 
-                _g.components.dragline
-                    .attr('d', 'M' + 5 + ',' + 5 + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
+                if (_g.components.dragline !== false) {
+                    _g.components.dragline
+                        .attr('d', 'M' + 0 + ',' + 0 + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
+                }
+
                 // move the cursor on the graph when it is enabled
                 if (_g.components.cursor !== false) {
                     _g.components.cursor.attr("transform", "translate(" + d3.mouse(this) + ")");
@@ -76,8 +87,6 @@ define([
         _g.link  = _g.svg.selectAll(".link");
         _g.node  = _g.svg.selectAll(".node", function (d) { return d._id; });
         _g.gnode = _g.svg.selectAll(".gnode");
-
-        _g.components.dragline = GraphComponents.create('Dragline', _g);
 
         // differentiate dblclick an click events
         var down,
@@ -99,25 +108,21 @@ define([
             .drag()
             // .origin(function(d) { return {x: d.x, y: d.y}; })
             .on('dragstart', function (d) {
-                _g.draggedElement = this;
-
+                if (_g.state.dragging === false) {
+                    return null;
+                }
                 // save first mouse position
                 _g.events.dragstartPosition = _g.events.dragPosition;
 
             }).on('drag', function (d) {
                 // id currently dragging and in create mode, prevent
                 // new nodes to be added when mouse event id down/up
-
             }).on('dragend', function (d) {
                 // reset the dragged element (no element is beeing dragged)
-                _g.draggedElement = false;
-
-                // reset the can add node variables of the create mode when drag is finished
 
                 // save end mouse position
                 _g.events.dragendPosition = _g.events.dragPosition;
-                console.log(_g.events.dragendPosition);
-                
+
                 if (_g.state.preventDrag === false) {
                     d3.select(this).classed('fixed', d.fixed = true);
                 }
@@ -301,7 +306,13 @@ define([
                         }
                     }
                 })
+                .classed('draggable', true)
                 .call(_g.force.drag)
+
+                // _g.gnodes
+                //     .on('.drag', null)
+                //     .on('touchstart.drag', null).on('mousedown.drag', null);
+                // ie. _g.gnodes.call(_g.force.drag); // or _self.disableDragging();
             ;
 
             _g.link.exit().remove();
@@ -313,8 +324,8 @@ define([
                     // find color
                     if (d._labels.length > 0) {
                         var firstLabel = d._labels[0];
-                        if (typeof(Mapping.colors[firstLabel]) !== 'undefined') {
-                            var color = Mapping.colors[firstLabel];
+                        if (typeof(Settings.graph.label.colors[firstLabel]) !== 'undefined') {
+                            var color = Settings.graph.label.colors[firstLabel];
                             klass += " "+color;
                         }
                     }
@@ -326,8 +337,8 @@ define([
             _g.gnodes.append('text')
                 .attr('class', 'label')
                 .text(function(d) {
-                    var idField  = Mapping.graph._id;
-                    var prop = Mapping.graph.primaryLabel;
+                    var idField  = Settings.graph._id;
+                    var prop = Settings.graph.primaryLabel;
 
                     return d._properties.name;
                     // if (typeof(d._properties[prop]) === 'undefined') {
@@ -384,12 +395,11 @@ define([
         _self.enableCreateMode = function () {
             _g.state.create = true;
 
-            // create a cursor element
-            _g.components.cursor = _g.svg.append("circle")
-                .attr("r", 30)
-                .attr("id", "cursor")
-                .attr("transform", "translate(-100,-100)")
-                .attr("class", "cursor");
+            // create a cursor element and a dragline element
+            _g.components.cursor = GraphComponents.create('Cursor', _g);
+            _g.components.dragline = GraphComponents.create('Dragline', _g);
+
+            _self.disableDragging();
         }
 
         /**
@@ -397,9 +407,53 @@ define([
          */
         _self.disableCreateMode = function () {
             _g.state.create = false;
+
             _g.components.cursor.remove();
             _g.components.cursor = false;
+
+            _g.components.dragline.remove();
+            _g.components.dragline = false;
+
+            _self.enableDragging();
         }
+
+        /**
+         * Enables node dragging
+         */
+        _self.enableDragging = function () {
+            _g.state.dragging = true;
+
+            d3.selectAll('g.gnode')
+                .on('touchstart.drag', _g.events.memory.touchstartDrag)
+                .on('mousedown.drag', _g.events.memory.mousedownDrag)
+                .call(_g.force.drag);
+        };
+
+        /**
+         * Disable node draggins
+         */
+        _self.disableDragging = function () {
+            _g.state.dragging = false;
+            // save all events to re-attach them later
+            if (_g.gnodes[0].length > 0) {
+                _g.events.memory = {
+                    touchstartDrag: _g.gnodes.on('touchstart.drag'),
+                    mousedownDrag: _g.gnodes.on('mousedown.drag'),
+                }
+            }
+
+            d3.selectAll('g.gnode')
+                .on('touchstart.drag', null)
+                .on('mousedown.drag', null)
+            ;
+        };
+
+        /**
+         * Tells you if dragging is enabled
+         */
+        _self.isDraggingEnabled = function () {
+            return _g.state.dragging;
+        };
 
         /**
          * Initialiser everything.

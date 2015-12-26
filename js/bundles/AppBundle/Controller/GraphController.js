@@ -6,18 +6,17 @@ define([
     'framework/Component/Neo4j/Transactions',
     'framework/Component/Neo4j/NodeFactory',
     'framework/Component/Neo4j/RelationshipFactory',
-    'bundles/AppBundle/Resources/Config/Mapping',
+    'bundles/AppBundle/Component/Graph/Graph',
     'bundles/AppBundle/Component/Form/NodeType',
     'bundles/AppBundle/Component/Form/NodeSearchType',
-    'bundles/AppBundle/Component/Graph/Graph',
-], function (Neo4jClient, Transactions, NodeFactory, RelationshipFactory, Mapping, NodeType, NodeSearchType, Graph) {
+], function (Neo4jClient, Transactions, NodeFactory, RelationshipFactory, Graph, NodeType, NodeSearchType) {
 'use strict';
 
     var graph = new Graph('svg#map');
 
     var client = new Neo4jClient({
-        apiEndpoint: Mapping.client.apiEndpoint,
-        authBasic:   Mapping.client.authBasic,
+        apiEndpoint: Settings.client.apiEndpoint,
+        authBasic:   Settings.client.authBasic,
     });
 
     return {
@@ -35,7 +34,7 @@ define([
             this.addEventListeners();
 
             // @todo To remove later
-            // NodeSearchType.submit();
+            NodeSearchType.setFocus();
         },
 
         /**
@@ -80,7 +79,7 @@ define([
             // the node id..
             var _self = this, transactions = new Transactions();
             transactions.add("MATCH (n) WHERE ID(n) = "+ _id +" RETURN n, ID(n) AS _id, labels(n) AS _labels");
-
+            
             client.commit(transactions, function (resultSet) {
                 var row = resultSet.getDataset()[0];
                 _self.createEditForm(NodeFactory.createNode(row['_id'], row['_labels'], row['n']));

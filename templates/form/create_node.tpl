@@ -2,10 +2,10 @@
     {{#if node._id}}
         <input class="form-control" type="hidden" name="_id" value="{{node._id}}" />
     {{/if}}
-
+    
     <div class="form-group" data-type="node-labels">
         <span class="help">Labels</span><br />
-        {{#each mappedLabels}}
+        {{#each mappedLabels.types}}
         <div class="checkbox">
             <label>
                 <input type="checkbox"{{#ifIn this ../node._labels }} checked="checked"{{/ifIn}} name="label[{{@index}}]" value="{{this}}" />

@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/nodes.css" />
     <link rel="stylesheet" href="css/links.css" />
 
+    <script src="settings.js"></script>
     <script data-main="js/AppKernel.js" src="js/lib/require-2.1.16.min.js"></script>
 </head>
 <body>
@@ -29,7 +30,7 @@
             </button>
         </div>
         <div class="navbar-collapse collapse" id="navbar-main">
-            <ul class="nav navbar-nav">
+            <!-- <ul class="nav navbar-nav">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Themes <span class="caret"></span></a>
                     <ul class="dropdown-menu" aria-labelledby="themes">
@@ -38,7 +39,7 @@
                         <li><a href="#">qsdqsd</a></li>
                     </ul>
                 </li>
-            </ul>
+            </ul> -->
             <ul class="nav navbar-nav navbar-right">
                 <li class="dropdown">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#">Options <span class="caret"></span></a>
@@ -64,7 +65,7 @@
                     Edit node <span class="panel-header-help" id="nid"></span>
                 </div>
                 <div class="panel-body" id="node-form">
-                    <span class="help">Click on a node to edit it.</span>
+                    <i class="help">Click on a node to edit it.</i>
                 </div>
             </div>
         </div>
@@ -74,7 +75,7 @@
                 <div class="panel-heading">
                     <form id="node-search" action="" method="get">
                         <div class="form-group">
-                            <div class="row">
+                            <div class="row no-gutters">
                                 <div class="col-xs-11">
                                     <div class="input-group">
                                         <span class="input-group-btn">
@@ -105,12 +106,26 @@
                 </span>
             </p>
 
-            <p class="paragraph">
-                Explain seomthing here
+            <p class="paragraph help small">
+                <p class="text-center help" style="font-size:1.4em">
+                <i class="fa fa-angle-down"></i>
+                </p>
+
+                    <p class="help small">
+                        Drag a line between nodes to create a relationship.
+                    </p>
+                    <p class="help small">
+                        Long click on the canvas to create new nodes.
+                    </p>
+
+            </p>
+            <!-- <p class="paragraph help">
+
             </p>
             <p class="paragraph">
+                <a href="#" data-event="config:open" data-file="truc" title="Miscellaneous">Miscellaneous</a>
                 <a href="#" data-toggle="modal" data-target="#modal" data-template="templates/modal/create_node.tpl" title="Create node">OPEN</a>
-            </p>
+            </p> -->
         </div>
     </div>
 

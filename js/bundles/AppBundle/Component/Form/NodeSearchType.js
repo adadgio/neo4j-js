@@ -22,7 +22,7 @@ define([
                 var text = $(input).val();
                 _self.search(text);
             });
-            
+
             // typeahead binding
             $(input).typeahead({
                 autoSelect: true,
@@ -47,6 +47,13 @@ define([
          */
         getForm: function () {
             return $(form);
+        },
+
+        /**
+         * Sets focus on form main input
+         */
+        setFocus: function () {
+            $(input).val(':Person').focus();
         },
 
         /**

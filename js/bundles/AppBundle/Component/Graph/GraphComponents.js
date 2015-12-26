@@ -26,10 +26,15 @@ define(function () {
          */
         createDragline: function (_g) {
             // line displayed when dragging new nodes
-            var dragline = _g.svg.append('svg:path')
-                .attr('class', 'dragline')
-                .attr('transform', "translate(100,100)")
-                .attr('d', 'M22,0L0,0');
+            var dragline = _g.svg.append("line")
+                .attr("x1", 5)
+                .attr("y1", 5)
+                .attr("x2", 50)
+                .attr("y2", 50);
+            // var dragline = _g.svg.append('svg:path')
+            //     .attr('class', 'dragline')
+            //     .attr('transform', "translate(100,100)")
+            //     .attr('d', 'M22,0L0,0');
 
             dragline.hide = function () {
                 this.classed('hidden', true);

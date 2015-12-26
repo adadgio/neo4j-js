@@ -1,7 +1,7 @@
 /**
  * Graph components (for clearer code)
  */
-define(function () {
+define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphComponents) {
 'use strict';
     var mouseTimer = false;
 
@@ -58,6 +58,8 @@ define(function () {
         graphOnMouseDown: function (_g, mouse) {
             if (!_g.state.create) { return; }
 
+            console.log(d3.event.target);
+
             var $this = this,
                 clock = 0;
             var coordinates = {x: mouse[0], y: mouse[1]};
@@ -81,8 +83,60 @@ define(function () {
             }, 1);
 
             // dragline. on mouse down the dragline has a start position
+            // _g.components.dragline
+            //     .attr('d', );
+        },
+
+        /**
+         * Only happend in create mode
+         */
+        onGraphRelationshipDragstart: function(d, _g) {
+            if (!_g.state.create) { return; }
+            if (_g.components.dragline !== false) { return; } //cant have two draglines
+            // make dragline start at node (d) position
+            // check the "d" is a node (its the event target)
+
+            if (typeof(d._id) == 'undefined' || parseInt(d._id) === 0) {
+                // console.log(d3.event.target);
+                return;
+            }
+
+            _g.components.dragline = GraphComponents.create('Dragline', _g);
+
             _g.components.dragline
-                .attr('d', );
+                .attr('x1', d.x)
+                .attr('y1', d.y)
+                .attr('data-source', parseInt(d._id));
+
+            _g.components.dragline.beeingDragged = true;
+
+            return;
+        },
+
+        /**
+         * Only happend in create mode
+         */
+        onGraphRelationshipMouseUp: function(_g) {
+            if (!_g.state.create) { return; }
+            if (!_g.components.dragline) { return; }
+
+            var element = d3.event.target;
+            var tagname = $(element).prop('tagName');
+            
+            console.log(tagname);
+            if (tagname !== 'circle') {
+                _g.components.dragline.remove();
+                _g.components.dragline = false;
+                return;
+            }
+
+            var _sourceId  = parseInt(_g.components.dragline.attr('data-source'));
+            var _targetId = parseInt($(element).attr('data-id')); //this it the node target id !:-)
+            console.log('@todo Add relationship from ' + _sourceId + ' to ' + _targetId);
+
+            // remove the dragline...
+            _g.components.dragline.remove();
+            _g.components.dragline = false;
         },
 
         /**

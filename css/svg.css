@@ -34,3 +34,7 @@ path.dragline {
     stroke: red;
     stroke-width: 2px;
 }
+
+line {
+    stroke: red;
+}

@@ -52,8 +52,10 @@ define([
             .on('keydown', function (e) { GraphHandlers.windowOnKeyDown(e, _g); });
 
         _g.svg = d3.select(selector)
-            .on('mouseup',   function () {
+            .on('mouseup', function (e) {
                 GraphHandlers.graphOnMouseUp(_g, d3.mouse(this));
+                // check if in create mode: when a dragline is mouseupped
+                GraphHandlers.onGraphRelationshipMouseUp(_g);
             })
             .on('mousedown', function () {
                 GraphHandlers.graphOnMouseDown(_g, d3.mouse(this));
@@ -66,9 +68,11 @@ define([
                 var mouse = d3.mouse(this);
                 var coords = {x: mouse[0] - 1, y: mouse[1] - 1};
 
-                if (_g.components.dragline !== false) {
+                // if a dragline exists and we are in create mode... follow the mouse ;-)
+                if (_g.components.dragline !== false && _g.components.dragline.beeingDragged === true) {
                     _g.components.dragline
-                        .attr('d', 'M' + 0 + ',' + 0 + 'L' + d3.mouse(this)[0] + ',' + d3.mouse(this)[1]);
+                        .attr('x2', d3.mouse(this)[0] - 2)
+                        .attr('y2', d3.mouse(this)[1] - 2);
                 }
 
                 // move the cursor on the graph when it is enabled
@@ -126,6 +130,8 @@ define([
                 if (_g.state.preventDrag === false) {
                     d3.select(this).classed('fixed', d.fixed = true);
                 }
+
+
             });
 
 
@@ -255,6 +261,7 @@ define([
 
             _g.gnodes = _g.node.enter().append("g")
                 .attr('class', 'gnode')
+                .attr('data-id', function (d) { return d._id; })
                 .on('mouseover', function (d){
                     // on hover, never display the cursor of the create mode
                     if (_g.state.create === true) {
@@ -308,18 +315,14 @@ define([
                 })
                 .classed('draggable', true)
                 .call(_g.force.drag)
-
-                // _g.gnodes
-                //     .on('.drag', null)
-                //     .on('touchstart.drag', null).on('mousedown.drag', null);
-                // ie. _g.gnodes.call(_g.force.drag); // or _self.disableDragging();
             ;
 
             _g.link.exit().remove();
             _g.node.exit().remove();
 
             _g.gnodes.append("circle")
-                .attr("class", function (d) {
+                .attr('data-id', function (d) { return d._id; })
+                .attr('class', function (d) {
                     var klass = "node";
                     // find color
                     if (d._labels.length > 0) {
@@ -395,9 +398,8 @@ define([
         _self.enableCreateMode = function () {
             _g.state.create = true;
 
-            // create a cursor element and a dragline element
+            // create a cursor element (dragline is creted by a drag action start when on create mode)
             _g.components.cursor = GraphComponents.create('Cursor', _g);
-            _g.components.dragline = GraphComponents.create('Dragline', _g);
 
             _self.disableDragging();
         }
@@ -442,9 +444,19 @@ define([
                 }
             }
 
+            // attach new events handlers on drag for creating
+            // relationships in create mode
+            // d3.selectAll('g.gnode')
+            //     .on('touchstart.drag', null)
+            //     .on('mousedown.drag', null)
+            // ;
             d3.selectAll('g.gnode')
-                .on('touchstart.drag', null)
-                .on('mousedown.drag', null)
+                .on('touchstart.drag', function (e) {
+                    // nothing to do here
+                })
+                .on('mousedown.drag', function (d) {
+                    GraphHandlers.onGraphRelationshipDragstart(d, _g)
+                });
             ;
         };
 

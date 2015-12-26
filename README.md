@@ -5,19 +5,19 @@ A Neo4j graph database explorer and admin dashboard written in Javascript.
 ## Coming soon !
 There is no stable branch yet, but one will be released soon !
 
-Check the first demo here : 
+Check the first demo here :
 [![Youtube demo](https://i.ytimg.com/vi/kKJzLi-7p_U/1.jpg?time=1451155728744)](https://youtu.be/kKJzLi-7p_U)
 
 ## Installation
 ### Pre-requisites
-    - Neo4j must be installed [instructions here](http://digitzalocean/neo4J)
-    - Neo4j Basic Authentication must have been configured
+- Neo4j must be installed [Neo4jInstall instructions here](https://www.digitalocean.com/community/tutorials/how-to-install-neo4j-on-an-ubuntu-vps)
+- Neo4j Basic Authentication must have been configured
 
 ### Quick configuration
-    - Create a virtual host on your machine or server.
-    - Point the virtual host to the folder where you downloaded Neo4j JS
-    - Open `bundles/AppBundle/Resources/Config/Mapping` and edit Neo4j endpoint and basic Auth
-    - ... additionally configure colors or whatever suits you
+- Create a virtual host on your machine or server.
+- Point the virtual host to the folder where you downloaded Neo4j JS
+- Open `bundles/AppBundle/Resources/Config/Mapping` and edit Neo4j endpoint and basic Auth
+- ... additionally configure colors or whatever suits you
 
 ## Security
 - If you don't want anybody to access that interface add HTTP authentication via your Nginx or Apache server
@@ -30,7 +30,7 @@ Check the first demo here :
 ## Going further
 
 ### Note
-This project relies on requireJS and on the awesome [melody-js](https://github.com/adadgio/melody-js) framework created by myself which
+This project relies on requireJS and on the awesome [melody-js](https://github.com/adadgio/melody-js) framework which
 replicates a Symfony2 like organization in Javascript while implement ADM architecture (it rocks).
 
 It also relies on the great [d3js](http://d3js.org) library so you might want to be confortable with that before modifying things in deep.

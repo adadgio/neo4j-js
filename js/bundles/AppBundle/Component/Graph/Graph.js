@@ -43,7 +43,7 @@ define([
                 GraphUtilities.tick(_g.node, _g.link);
             },
         };
-        
+
         /**
          * Declare all important master graph elements
          */

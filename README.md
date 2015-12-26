@@ -85,3 +85,7 @@ onNodeCreatePromise: function (coordinates) {
 
 ## Licence
 You do absolutely what you want with that project (MIT Licence).
+=======
+# neo4j-js
+
+A Neo4j graph editor written in Javascript.

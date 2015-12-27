@@ -56,6 +56,7 @@ define([
                 GraphHandlers.graphOnMouseUp(_g, d3.mouse(this));
                 // check if in create mode: when a dragline is mouseupped
                 var createRelationship = GraphHandlers.onGraphRelationshipMouseUpCreate(_g);
+                console.log(createRelationship);
                 if (createRelationship) {
                     $(_g.selector).trigger('relationship:create:promise', [{source: createRelationship.source, target: createRelationship.target}]);
                 }
@@ -76,6 +77,8 @@ define([
                     _g.components.dragline
                         .attr('x2', d3.mouse(this)[0] - 2)
                         .attr('y2', d3.mouse(this)[1] - 2);
+
+                    _g.components.cursor.classed('hidden', true);
                 }
 
                 // move the cursor on the graph when it is enabled
@@ -252,7 +255,7 @@ define([
             _g.gnodes = _g.node.enter().append("g")
                 .attr('class', 'gnode')
                 .attr('data-id', function (d) { return d._id; })
-                .on('mouseover', function (d){
+                .on('mouseover', function (d) {
                     // on hover, never display the cursor of the create mode
                     if (_g.state.create === true) {
                         _g.components.cursor.classed('hidden', true);
@@ -310,6 +313,10 @@ define([
             _g.link.exit().remove();
             _g.node.exit().remove();
 
+            // _g.gnodes.append("circle")
+            //     .attr('class', 'ring')
+            //     .attr("r", 23);
+
             _g.gnodes.append("circle")
                 .attr('data-id', function (d) { return d._id; })
                 .attr('class', function (d) {
@@ -355,31 +362,31 @@ define([
         /**
          * Bind general UI elements
          */
-        _self.bindInterface = function () {
-            $('a[data-toggle="create-mode"]').unbind('click').bind('click', function (e) {
-                var mode = $(this).attr('data-mode');
-                e.preventDefault();
-
-                if (mode === 'off') {
-                    $(this).find('i').removeClass('fa-rotate-180');
-                    $(this).attr('data-mode', 'on');
-                    _self.enableCreateMode();
-                } else if (mode === 'on') {
-                    $(this).attr('data-mode', 'off');
-                    $(this).find('i').addClass('fa-rotate-180');
-                    _self.disableCreateMode();
-                } else {
-                    // yeah, error occured, but practically impossible
-                }
-            });
-        };
+        // _self.bindInterface = function () {
+        //     $('a[data-toggle="create-mode"]').unbind('click').bind('click', function (e) {
+        //         var mode = $(this).attr('data-mode');
+        //         e.preventDefault();
+        //
+        //         if (mode === 'off') {
+        //             $(this).find('i').removeClass('fa-rotate-180');
+        //             $(this).attr('data-mode', 'on');
+        //             _self.enableCreateMode();
+        //         } else if (mode === 'on') {
+        //             $(this).attr('data-mode', 'off');
+        //             $(this).find('i').addClass('fa-rotate-180');
+        //             _self.disableCreateMode();
+        //         } else {
+        //             // yeah, error occured, but practically impossible
+        //         }
+        //     });
+        // };
 
         /**
          * Initialiser everything.
          */
         _self.init = function () {
             _self.update();
-            _self.bindInterface();
+            // _self.bindInterface();
         };
 
         /**
@@ -391,10 +398,12 @@ define([
             // create a cursor element (dragline is creted by a drag action start when on create mode)
             _g.components.cursor = GraphComponents.create('Cursor', _g);
 
+            d3.selectAll('g.gnode').classed('cell', true);
+
             _self.disableDragging();
             $(_g.selector).trigger('graph.create:enable', []);
         }
-        
+
         /**
          * Enable create mode ON
          */
@@ -408,6 +417,8 @@ define([
                 _g.components.dragline.remove();
                 _g.components.dragline = false;
             }
+
+            d3.selectAll('g.gnode').classed('cell', false);
 
             _self.enableDragging();
             $(_g.selector).trigger('graph.create:disable', []);

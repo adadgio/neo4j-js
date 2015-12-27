@@ -20,16 +20,15 @@ circle.node {
 /** node colors **/
 circle.node.red {
     fill: #FF756E;
-}
-circle.node.blue {
-    fill: #68BDF6;
-    stroke: #5CA8DB;
+    stroke: #E06760;
 }
 circle.node.violet {
     fill: #DE9BF9;
+    stroke: #BF85D6;
 }
 circle.node.green {
     fill: #6DCE9E;
+    stroke: #6DCE9E;
 }
 circle.node.yellow {
     fill: #FFD86E;
@@ -39,15 +38,28 @@ circle.node.blue {
     stroke: #5CA8DB;
 }
 
+circle.ring {
+    fill: transparent;
+    stroke: transparent;
+    stroke-width: 4px;
+}
+
 text.label {
     fill: #fff;
-    font-size: 9px;
+    font-size: 8px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    baseline-shift: -3px;
+    text-anchor: middle;
 }
 
 /* Actions, modifications and overridings */
-g.gnode.fixed > circle.node {
-    stroke: #fdcc59;
+g.gnode.selected > circle.ring {
+    stroke: #F7E0A8;
 }
-g.gnode.selected > circle.node {
-    fill: red !important;
+g.gnode.fixed > circle.node {
+    stroke: #fff !important;
+}
+g.gnode.cell, g.gnode.cell > circle.node, g.gnode.cell > text.label {
+    cursor: cell !important;
 }

@@ -7,8 +7,9 @@ define([
     'framework/Component/Neo4j/Factory',
     'bundles/AppBundle/Component/Graph/Graph',
     'bundles/AppBundle/Component/Form/NodeType',
+    'bundles/AppBundle/Component/Form/RelationshipType',
     'bundles/AppBundle/Component/Form/NodeSearchType',
-], function (Neo4jClient, Transactions, Factory, Graph, NodeType, NodeSearchType) {
+], function (Neo4jClient, Transactions, Factory, Graph, NodeType, RelationshipType, NodeSearchType) {
 'use strict';
 
     var graph = new Graph('svg#map');
@@ -65,8 +66,9 @@ define([
             graph.$.on('node:create:promise', function (e, coordinates) {
                 _self.onNodeCreatePromise(coordinates);
             });
-            
+
             graph.$.on('relationship:create:promise', function (e, relationshipData) { // relationship contains a source and target d_.id
+                console.log('Create a relationship');
                 _self.onRelationshipCreatePromise(relationshipData);
             });
 
@@ -122,7 +124,7 @@ define([
 
             client.commit(transactions, function (resultSet) {
                 var row = resultSet.getDataset()[0];
-                _self.createEditForm(Factory.createNode(row['_id'], row['_labels'], row['n']));
+                _self.createNodeEditForm(Factory.createNode(row['_id'], row['_labels'], row['n']));
             });
         },
 
@@ -146,8 +148,7 @@ define([
         },
 
         /**
-         * Triggered when the user searches some nodes in the graph
-         * and places node results sets on the svg graph.
+         * Triggered when the user adds a new node in create mode.
          */
         onNodeMerge: function (transactions) {
             client.commit(transactions, function (resultSet) {
@@ -189,19 +190,33 @@ define([
             var _self = this;
 
             var relationship = Factory.createRelationship('TEST_REL', {}, data.source, data.target);
-            console.log(relationship);
+            var transactions = RelationshipType.getTransactions(relationship);
+            console.log(transactions);
         },
 
         /**
          * Load node edit form.
           * @param A node create with the Factory
          */
-        createEditForm: function (node) {
+        createNodeEditForm: function (node) {
             var _self = this;
 
             NodeType.renderView('div#node-form', node, function (e) {
                 e.preventDefault();
                 _self.onNodeMerge(NodeType.getTransactions());
+            });
+        },
+
+        /**
+         * Load node edit form.
+          * @param A node create with the Factory
+         */
+        createRelationshipEditForm: function (relationship) {
+            var _self = this;
+
+            RelationshipType.renderView('div#relationship-form', relationship, function (e) {
+                e.preventDefault();
+                _self.onRelationshipMerge(RelationshipType.getTransactions());
             });
         },
     };

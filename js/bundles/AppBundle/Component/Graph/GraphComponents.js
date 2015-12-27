@@ -20,7 +20,7 @@ define(function () {
                 return this[func].call(this, args);
             }
         },
-
+        
         /**
          * Creates the hidden drag line when linking two nodes
          */
@@ -29,8 +29,8 @@ define(function () {
             var dragline = _g.svg.append("line")
                 .attr("x1", 5)
                 .attr("y1", 5)
-                .attr("x2", 50)
-                .attr("y2", 50);
+                .attr("x2", 5)
+                .attr("y2", 5);
             // var dragline = _g.svg.append('svg:path')
             //     .attr('class', 'dragline')
             //     .attr('transform', "translate(100,100)")
@@ -45,7 +45,7 @@ define(function () {
 
             return dragline;
         },
-        
+
         /**
          * Creates the hidden drag line when linking two nodes
          */

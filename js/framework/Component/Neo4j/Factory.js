@@ -57,7 +57,7 @@ define(function() {
                     // the its a property[n] or label[n]...
                     var type  = matches[1], // "label|property"
                         index = parseInt(matches[2]);
-                        
+
                     if (type === 'label') {
                         node['_labels'].push(val);
                     } else if (type === 'property') {
@@ -77,6 +77,14 @@ define(function() {
             }
 
             return node;
+        },
+
+        /**
+         * @todo
+         */
+        createRelationshipFromFormData: function (relationship)
+        {
+                
         },
 
         /**

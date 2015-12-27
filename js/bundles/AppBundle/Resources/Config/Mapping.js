@@ -32,7 +32,7 @@ define(function () {
         colors: {
             Truc:       'green',
             Machin:     'red',
-            Specialty:  'orange',
+            Specialty:  'red',
             Person:     'violet',
             Page:       'green',
             Document:   'gray',

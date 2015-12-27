@@ -5,7 +5,7 @@ define([
     'templating',
     'framework/Component/Neo4j/Factory',
     'bundles/AppBundle/Component/Form/DataTransformer/NodeTypeTransactions'
-], function (Templating, Factory,NodeTypeTransactions) {
+], function (Templating, Factory, NodeTypeTransactions) {
 'use strict';
 
     var _id  = null;

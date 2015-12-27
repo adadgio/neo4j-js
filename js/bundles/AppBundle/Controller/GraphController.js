@@ -4,12 +4,11 @@
 define([
     'framework/Component/Neo4j/Client',
     'framework/Component/Neo4j/Transactions',
-    'framework/Component/Neo4j/NodeFactory',
-    'framework/Component/Neo4j/RelationshipFactory',
+    'framework/Component/Neo4j/Factory',
     'bundles/AppBundle/Component/Graph/Graph',
     'bundles/AppBundle/Component/Form/NodeType',
     'bundles/AppBundle/Component/Form/NodeSearchType',
-], function (Neo4jClient, Transactions, NodeFactory, RelationshipFactory, Graph, NodeType, NodeSearchType) {
+], function (Neo4jClient, Transactions, Factory, Graph, NodeType, NodeSearchType) {
 'use strict';
 
     var graph = new Graph('svg#map');
@@ -21,19 +20,25 @@ define([
 
     return {
         /**
+         * Create mode switch selector
+         */
+        createModeSwitch: 'a[data-toggle="create-mode"]',
+        defaultsFormPanel: 'div#create-mode-defaults-form',
+
+        /**
          * Constructor
          */
         init: function () {
-            // init graph
+            // init svg graph
             graph.init();
 
-            // bind the search node form
+            // bind search node(s) form
             NodeSearchType.bind();
 
-            // bind event listeners
+            // main event listeners
             this.addEventListeners();
 
-            // @todo To remove later
+            // @todo to remove later
             NodeSearchType.setFocus();
         },
 
@@ -43,6 +48,11 @@ define([
         addEventListeners: function () {
             var _self = this,
                 modal = $('div#modal');
+
+            $(this.createModeSwitch).unbind('click').bind('click', {self:this}, function (e) {
+                e.preventDefault();
+                e.data.self.onCreateModeToggle($(this));
+            });
 
             graph.$.on('node:click', function (e, d) {
                 _self.onNodeClick(d._id);
@@ -55,10 +65,40 @@ define([
             graph.$.on('node:create:promise', function (e, coordinates) {
                 _self.onNodeCreatePromise(coordinates);
             });
+            
+            graph.$.on('relationship:create:promise', function (e, relationshipData) { // relationship contains a source and target d_.id
+                _self.onRelationshipCreatePromise(relationshipData);
+            });
+
+            graph.$.on('graph.create:enable', function (e) {
+                $(_self.defaultsFormPanel).slideDown('fast');
+            });
+            graph.$.on('graph.create:disable', function (e) {
+                $(_self.defaultsFormPanel).slideUp('fast');
+            });
 
             NodeSearchType.getForm().on('node:search:submit', function (e, transactions) {
                 _self.onNodeSearchPostSubmit(transactions);
             });
+        },
+
+        /**
+         * What happens when the create mode switch is toggled.
+         */
+        onCreateModeToggle: function (button) {
+            var mode = $(button).attr('data-mode');
+
+            if (mode === 'off') {
+                $(button).find('i').removeClass('fa-rotate-180');
+                $(button).attr('data-mode', 'on');
+                graph.enableCreateMode();
+            } else if (mode === 'on') {
+                $(button).attr('data-mode', 'off');
+                $(button).find('i').addClass('fa-rotate-180');
+                graph.disableCreateMode();
+            } else {
+                // yeah, error occured, but practically impossible
+            }
         },
 
         /**
@@ -67,7 +107,7 @@ define([
         onNodeSearchPostSubmit: function (transactions) {
             client.commit(transactions, function (resultSet) {
                 resultSet.each(function (row) {
-                    graph.addNode(NodeFactory.createNode(row['_id'], row['_labels'], row['n']));
+                    graph.addNode(Factory.createNode(row['_id'], row['_labels'], row['n']));
                 });
             });
         },
@@ -79,10 +119,10 @@ define([
             // the node id..
             var _self = this, transactions = new Transactions();
             transactions.add("MATCH (n) WHERE ID(n) = "+ _id +" RETURN n, ID(n) AS _id, labels(n) AS _labels");
-            
+
             client.commit(transactions, function (resultSet) {
                 var row = resultSet.getDataset()[0];
-                _self.createEditForm(NodeFactory.createNode(row['_id'], row['_labels'], row['n']));
+                _self.createEditForm(Factory.createNode(row['_id'], row['_labels'], row['n']));
             });
         },
 
@@ -97,9 +137,9 @@ define([
 
             client.commit(transactions, function (resultSet) {
                 resultSet.each(function (row) {
-                    var sourceNode = NodeFactory.createNode(row['_aid'], row['_alabels'], row['a']);
-                    var targetNode = NodeFactory.createNode(row['_bid'], row['_blabels'], row['b']);
-                    var relationship = RelationshipFactory.createRelationship(row['_rtype'], {}, sourceNode, targetNode);
+                    var sourceNode = Factory.createNode(row['_aid'], row['_alabels'], row['a']);
+                    var targetNode = Factory.createNode(row['_bid'], row['_blabels'], row['b']);
+                    var relationship = Factory.createRelationship(row['_rtype'], {}, sourceNode, targetNode);
                     graph.addLink(relationship);
                 });
             });
@@ -113,38 +153,48 @@ define([
             client.commit(transactions, function (resultSet) {
                 resultSet.each(function (row) {
                     // add id as property
-                    var node = NodeFactory.createNode(row['_id'], row['_labels'], row['n']);
+                    var node = Factory.createNode(row['_id'], row['_labels'], row['n']);
                     graph.updateNode(node);
                 });
             });
         },
 
         /**
-         * Trigger when the graph has notified use that a node was to be created
+         * Triggered when the graph has notified use that a node was to be created
          * we need to return that created node with a valid _id or false
          */
         onNodeCreatePromise: function (coordinates) {
             var _self = this;
 
             // create a new node using the factory with no _id, no _labels and no _properties
-            var node = NodeFactory.createNode(null, ["Hey","Joe"], {blugr:"kjq"});
+            var node = Factory.createNode(null, ["Hey","Joe"], {blugr:"kjq"});
             var transactions = NodeType.getTransactions(node);
 
             client.commit(transactions, function (resultSet) {
                 var row = resultSet.getDataset()[0];
                 // re-load the node from what is returned byt the create query and create a proper node just in case
                 // (does not launch another MATCH query, just use the RETURN statement at the end of the CREATE statement :-))
-                graph.addNode(NodeFactory.createNode(row['_id'], row['_labels'], row['n']), true, coordinates);
+                graph.addNode(Factory.createNode(row['_id'], row['_labels'], row['n']), true, coordinates);
                 _self.onNodeClick(row['_id']);
                 // and by the way open the modal to edit the node
                 // now add it the the graph !:-)
             });
         },
 
+        /**
+         * Triggered when a dragline is successfully dragged between
+         * two nodes to create a relationship from source node to target node.
+         */
+        onRelationshipCreatePromise: function (data) {
+            var _self = this;
+
+            var relationship = Factory.createRelationship('TEST_REL', {}, data.source, data.target);
+            console.log(relationship);
+        },
 
         /**
          * Load node edit form.
-          * @param A node create with the NodeFactory
+          * @param A node create with the Factory
          */
         createEditForm: function (node) {
             var _self = this;

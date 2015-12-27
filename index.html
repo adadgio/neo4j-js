@@ -106,18 +106,40 @@
                 </span>
             </p>
 
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <span class="panel-heading-loader hidden" id="defaults-form-loader"><i class="fa fa-spinner fa-spin"></i></span>
+                    Defaults <span class="panel-header-help"></span>
+                </div>
+                <div class="panel-body" id="create-mode-defaults-form">
+                    <form method="post" action="" id="defaults-node-form" data-type="relationship-form">
+                        <div class="form-group">
+                            <label>Default label</label>
+                            <select class="form-control input-xs" name="type">
+                                <option value="REL_TYPE">REL_TYPE</option>
+                                <option value="LINKED_WITH">LINKED_WITH</option>
+                            </select>
+                        </div>
+                    </form>
+                    <form method="post" action="" id="defaults-relationship-form" data-type="relationship-form">
+                        <div class="form-group">
+                            <label>Relationship type</label>
+                            <select class="form-control input-xs" name="type">
+                                <option value="REL_TYPE">REL_TYPE</option>
+                                <option value="LINKED_WITH">LINKED_WITH</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
             <p class="paragraph help small">
-                <p class="text-center help" style="font-size:1.4em">
-                <i class="fa fa-angle-down"></i>
+                <p class="help small">
+                    Drag a line between nodes to create a relationship.
                 </p>
-
-                    <p class="help small">
-                        Drag a line between nodes to create a relationship.
-                    </p>
-                    <p class="help small">
-                        Long click on the canvas to create new nodes.
-                    </p>
-
+                <p class="help small">
+                    Long click on the canvas to create new nodes.
+                </p>
             </p>
             <!-- <p class="paragraph help">
 

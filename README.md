@@ -66,7 +66,7 @@ onNodeCreatePromise: function (coordinates) {
     var _self = this;
 
     // create a new node using the factory with no _id, no _labels and no _properties
-    var node = NodeFactory.createNode(null, ["Hey","Joe"], {blugr:"kjq"}); // pass null ID, some labels and properties
+    var node = Factory.createNode(null, ["Hey","Joe"], {blugr:"kjq"}); // pass null ID, some labels and properties
     var transactions = NodeType.getTransactions(node);
 
     client.commit(transactions, function (resultSet) {
@@ -74,7 +74,7 @@ onNodeCreatePromise: function (coordinates) {
         // re-load the node from what is returned by the create query and create a proper node just in case
         // (does not launch another MATCH query, just use the RETURN statement of the CREATE statement
         // now enough talking: add it the the graph !:-)
-        graph.addNode(NodeFactory.createNode(row['_id'], row['_labels'], row['n']), true, coordinates); // true: force graph update (default) and force coordinates, which should be mouse coordinates ate this point
+        graph.addNode(Factory.createNode(row['_id'], row['_labels'], row['n']), true, coordinates); // true: force graph update (default) and force coordinates, which should be mouse coordinates ate this point
         _self.onNodeClick(row['_id']); // and by the way open the modal to edit the node
 
 

@@ -13,3 +13,7 @@ body {
 a:hover {
     color: #17B38B;
 }
+
+div#create-mode-defaults-form {
+    display: none;
+}

@@ -8,7 +8,7 @@ define([
     return {
         /**
          * Transform NodeType form into cypher ready transaction query.
-         * @param array   Node from the NodeFactory
+         * @param array   Node from the Neo4j\Factory
          * @return object Neo4jStatement
          */
         getTransactions: function (node) {

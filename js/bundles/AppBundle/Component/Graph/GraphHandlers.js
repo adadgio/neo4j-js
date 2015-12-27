@@ -12,6 +12,18 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
         mouseDownUpTolerance: 150,
 
         /**
+         * Find a node by real _id in the Graph nodes list
+         */
+        findNodeById: function (_g, _id) {
+            for (var i=0; i < _g.nodes.length; i++) {
+                if (parseInt(_g.nodes[i]._id) === parseInt(_id)) {
+                    return {index: i, node: _g.nodes[i]};
+                }
+            }
+            return false;
+        },
+
+        /**
          * Happens on key up
          */
         windowOnKeyUp: function (e, _g) {
@@ -58,8 +70,6 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
         graphOnMouseDown: function (_g, mouse) {
             if (!_g.state.create) { return; }
 
-            console.log(d3.event.target);
-
             var $this = this,
                 clock = 0;
             var coordinates = {x: mouse[0], y: mouse[1]};
@@ -95,7 +105,7 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
             if (_g.components.dragline !== false) { return; } //cant have two draglines
             // make dragline start at node (d) position
             // check the "d" is a node (its the event target)
-
+            
             if (typeof(d._id) == 'undefined' || parseInt(d._id) === 0) {
                 // console.log(d3.event.target);
                 return;
@@ -116,27 +126,29 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
         /**
          * Only happend in create mode
          */
-        onGraphRelationshipMouseUp: function(_g) {
-            if (!_g.state.create) { return; }
-            if (!_g.components.dragline) { return; }
+        onGraphRelationshipMouseUpCreate: function(_g) {
+            if (!_g.state.create) { return false; }
+            if (!_g.components.dragline) { return false; }
 
             var element = d3.event.target;
-            var tagname = $(element).prop('tagName');
-            
-            console.log(tagname);
-            if (tagname !== 'circle') {
+
+            if ($(element).prop('tagName') !== 'circle') {
                 _g.components.dragline.remove();
                 _g.components.dragline = false;
-                return;
+                return false;
             }
 
-            var _sourceId  = parseInt(_g.components.dragline.attr('data-source'));
-            var _targetId = parseInt($(element).attr('data-id')); //this it the node target id !:-)
-            console.log('@todo Add relationship from ' + _sourceId + ' to ' + _targetId);
+            var sourceId = parseInt(_g.components.dragline.attr('data-source'));
+            var targetId = parseInt($(element).attr('data-id')); //this it the node target id !:-)
 
             // remove the dragline...
             _g.components.dragline.remove();
             _g.components.dragline = false;
+
+            return {
+                source: this.findNodeById(_g, sourceId),
+                target: this.findNodeById(_g, targetId),
+            };
         },
 
         /**

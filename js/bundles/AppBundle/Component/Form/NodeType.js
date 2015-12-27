@@ -3,9 +3,9 @@
  */
 define([
     'templating',
-    'framework/Component/Neo4j/NodeFactory',
+    'framework/Component/Neo4j/Factory',
     'bundles/AppBundle/Component/Form/DataTransformer/NodeTypeTransactions'
-], function (Templating, NodeFactory,NodeTypeTransactions) {
+], function (Templating, Factory,NodeTypeTransactions) {
 'use strict';
 
     var _id  = null;
@@ -49,7 +49,7 @@ define([
         /**
          * Get element of a form
          * @param string   Where to render the template
-         * @param object   A Node Object create with the NodeFactory
+         * @param object   A Node Object create with the Factory
          * @param function Callback function after template has been rendered
          */
         renderView: function (selector, node, callback) {
@@ -113,7 +113,7 @@ define([
         getTransactions: function (node) {
             if (typeof(node) === 'undefined') {
                 var formData = this.getData();
-                var node = NodeFactory.createNodeFromFormData(formData);
+                var node = Factory.createNodeFromFormData(formData);
             } else {
                 // else we already have an input not and just want to get the transaction queries
             }

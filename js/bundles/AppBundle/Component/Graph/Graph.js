@@ -3,11 +3,11 @@
  */
 define([
     'd3js',
-    'framework/Component/Neo4j/NodeFactory',
+    'framework/Component/Neo4j/Factory', // not used here
     'bundles/AppBundle/Component/Graph/GraphComponents',
     'bundles/AppBundle/Component/Graph/GraphHandlers',
     'bundles/AppBundle/Component/Graph/GraphUtilities',
-], function (d3, NodeFactory, GraphComponents, GraphHandlers, GraphUtilities) {
+], function (d3, Factory, GraphComponents, GraphHandlers, GraphUtilities) {
 'use strict';
 
     return function (selector) {
@@ -55,7 +55,10 @@ define([
             .on('mouseup', function (e) {
                 GraphHandlers.graphOnMouseUp(_g, d3.mouse(this));
                 // check if in create mode: when a dragline is mouseupped
-                GraphHandlers.onGraphRelationshipMouseUp(_g);
+                var createRelationship = GraphHandlers.onGraphRelationshipMouseUpCreate(_g);
+                if (createRelationship) {
+                    $(_g.selector).trigger('relationship:create:promise', [{source: createRelationship.source, target: createRelationship.target}]);
+                }
             })
             .on('mousedown', function () {
                 GraphHandlers.graphOnMouseDown(_g, d3.mouse(this));
@@ -137,7 +140,7 @@ define([
 
         /**
          * Add a node to the graph.
-         * @param object A formatted node object from the NodeFactory
+         * @param object A formatted node object from the Neo4j\Factory
          */
         _self.addNode = function (node, update, coordinates) {
             if (typeof(update) == 'undefined') { var update = true; };
@@ -152,7 +155,7 @@ define([
             }
 
             // check that the node does no alreay exists ! ;-)
-            var needle = _self.findNodeById(node._id);
+            var needle = GraphHandlers.findNodeById(_g, node._id);
             if (needle) {
                 return false;
             }
@@ -169,13 +172,13 @@ define([
 
         /**
          * Add a node to the graph.
-         * @param object A formatted node object from the NodeFactory
+         * @param object A formatted node object from the Neo4j\Factory
          */
         _self.updateNode = function (node, update) {
             if (typeof(update) == 'undefined') { var update = true; };
 
             // get existing node
-            var needle = _self.findNodeById(node._id);
+            var needle = GraphHandlers.findNodeById(_g, node._id);
             if (false === needle) {
                 return false;
             }
@@ -193,7 +196,7 @@ define([
 
         /**
          * Add a node to the graph.
-         * @param object A formatted node object from the NodeFactory
+         * @param object A formatted node object from the Neo4j\Factory
          */
         _self.removeNodeByIndex = function (index, update) {
             if (typeof(update) == 'undefined') {
@@ -210,31 +213,18 @@ define([
         };
 
         /**
-         * Find a node by real _id in the Graph nodes list
-         */
-        _self.findNodeById = function (_id) {
-            for (var i=0; i < _g.nodes.length; i++) {
-                if (parseInt(_g.nodes[i]._id) === parseInt(_id)) {
-                    return {index: i, node: _g.nodes[i]};
-                }
-            }
-
-            return false;
-        }
-
-        /**
          * Add a node to the graph.
-         * @param object A formatted node object from the NodeFactory
+         * @param object A formatted node object from the Neo4j\Factory
          */
         _self.addLink = function (relationship) {
             // find both nodes
-            var sourceNeedle = _self.findNodeById(relationship._source._id);
-            var targetNeedle = _self.findNodeById(relationship._target._id);
+            var sourceNeedle = GraphHandlers.findNodeById(_g, relationship._source._id);
+            var targetNeedle = GraphHandlers.findNodeById(_g, relationship._target._id);
 
             // if target node does not exist we need to add it !
             if (!targetNeedle) {
                 _self.addNode(relationship._target, true);
-                targetNeedle = _self.findNodeById(relationship._target._id);
+                targetNeedle = GraphHandlers.findNodeById(_g, relationship._target._id);
             }
 
             var link = {
@@ -402,8 +392,9 @@ define([
             _g.components.cursor = GraphComponents.create('Cursor', _g);
 
             _self.disableDragging();
+            $(_g.selector).trigger('graph.create:enable', []);
         }
-
+        
         /**
          * Enable create mode ON
          */
@@ -413,10 +404,13 @@ define([
             _g.components.cursor.remove();
             _g.components.cursor = false;
 
-            _g.components.dragline.remove();
-            _g.components.dragline = false;
+            if (_g.components.dragline !== false) {
+                _g.components.dragline.remove();
+                _g.components.dragline = false;
+            }
 
             _self.enableDragging();
+            $(_g.selector).trigger('graph.create:disable', []);
         }
 
         /**

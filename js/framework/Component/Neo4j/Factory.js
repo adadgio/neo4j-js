@@ -6,7 +6,7 @@ define(function() {
 
     return {
         /**
-         * Create a formatted Node object
+         * Create a formatted Node object that d3js can use.
          */
         createNode: function (_id, _labels, properties) {
             if (_id === false || _id === null || parseInt(_id) === 0) {
@@ -29,7 +29,7 @@ define(function() {
                     arrayLabels.push(_labels[index]);
                 }
             }
-            
+
             return {
                 _id: _id,
                 _labels: arrayLabels,
@@ -38,7 +38,7 @@ define(function() {
         },
 
         /**
-         * Create a formatted Node object
+         * Create a formatted Node object that d3js can use.
          */
         createNodeFromFormData: function (formData) {
             var node   = {
@@ -57,7 +57,7 @@ define(function() {
                     // the its a property[n] or label[n]...
                     var type  = matches[1], // "label|property"
                         index = parseInt(matches[2]);
-
+                        
                     if (type === 'label') {
                         node['_labels'].push(val);
                     } else if (type === 'property') {
@@ -77,6 +77,23 @@ define(function() {
             }
 
             return node;
+        },
+
+        /**
+         * Creates a relationship object that d3js can use.
+         * @todo Allow sourceNode and targetId to be node objects from the Factory.
+         */
+        createRelationship: function (_type, properties, sourceNode, targetNode) {
+            if (typeof(_type) === 'undefined' || _type === null || _type === false || _type === '') {
+                throw new Error('Factory::createRelationship() You cannot create an empty typed relationship');
+            }
+
+            return {
+                _source: sourceNode,
+                _target: targetNode,
+                _type: _type,
+                _properties: properties
+            };
         },
     };
 });

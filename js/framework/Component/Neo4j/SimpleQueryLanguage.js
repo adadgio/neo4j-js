@@ -7,7 +7,7 @@ define(function () {
         /**
          * :Page name=test
          */
-        translate: function (string) {
+        translate: function (string, level) {
             // find if there is/are label(s)
             var labels = "";
             var properties  = [];
@@ -31,15 +31,21 @@ define(function () {
 
             }
 
-            var queryString = "MATCH (n"+ labels;
+            var queryString = "MATCH (a"+ labels;
 
             if (properties.length > 0) {
                 queryString += " {" + properties.join(', ') + "}";
             }
 
-            // close query string
-            queryString += ") RETURN n, ID(n) AS _id, labels(n) AS _labels LIMIT 60";
+            // @todo only level one of relationships is supported
+            if (level === 1) {
+                queryString += ")-[r]->(b) RETURN a, ID(a) AS _aid, labels(a) AS _alabels, r, type(r) AS _rtype, b, ID(b) AS _bid, labels(b) AS _blabels LIMIT 60";
+            } else {
+                queryString += ") RETURN a, ID(a) AS _aid, labels(a) AS _alabels LIMIT 60";
+            }
 
+            // close query string
+            console.log(queryString);
             return queryString;
         }
 

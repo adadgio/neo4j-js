@@ -68,7 +68,6 @@ define([
             });
 
             graph.$.on('relationship:create:promise', function (e, relationshipData) { // relationship contains a source and target d_.id
-                console.log('Create a relationship');
                 _self.onRelationshipCreatePromise(relationshipData);
             });
 
@@ -94,10 +93,18 @@ define([
                 $(button).find('i').removeClass('fa-rotate-180');
                 $(button).attr('data-mode', 'on');
                 graph.enableCreateMode();
+
+                // also hide node edit form
+                NodeType.show();
+
             } else if (mode === 'on') {
                 $(button).attr('data-mode', 'off');
                 $(button).find('i').addClass('fa-rotate-180');
                 graph.disableCreateMode();
+
+                // also show node edit form
+                NodeType.hide();
+
             } else {
                 // yeah, error occured, but practically impossible
             }
@@ -109,7 +116,18 @@ define([
         onNodeSearchPostSubmit: function (transactions) {
             client.commit(transactions, function (resultSet) {
                 resultSet.each(function (row) {
-                    graph.addNode(Factory.createNode(row['_id'], row['_labels'], row['n']));
+
+                    var nodeA = Factory.createNode(row['_aid'], row['_alabels'], row['a']);
+                    graph.addNode(nodeA);
+
+                    if (typeof(row['r']) !== 'undefined' && typeof(row['b']) !== 'undefined') {
+                        var nodeB = Factory.createNode(row['_bid'], row['_blabels'], row['b']);
+                        graph.addNode(nodeB);
+                        
+                        graph.addLink(
+                            Factory.createRelationship(row['_rtype'], {}, nodeA, nodeB)
+                        );
+                    }
                 });
             });
         },
@@ -135,7 +153,7 @@ define([
             // the node id..
             var _self = this, transactions = new Transactions();
 
-            transactions.add("MATCH (a)-[r]-(b) WHERE ID(a) = "+ _id +" RETURN a, ID(a) AS _aid, labels(a) AS _alabels, r,  type(r) AS _rtype, b, ID(b) AS _bid, labels(b) AS _blabels");
+            transactions.add("MATCH (a)-[r]->(b) WHERE ID(a) = "+ _id +" RETURN a, ID(a) AS _aid, labels(a) AS _alabels, r,  type(r) AS _rtype, b, ID(b) AS _bid, labels(b) AS _blabels");
 
             client.commit(transactions, function (resultSet) {
                 resultSet.each(function (row) {
@@ -191,7 +209,15 @@ define([
 
             var relationship = Factory.createRelationship('TEST_REL', {}, data.source, data.target);
             var transactions = RelationshipType.getTransactions(relationship);
-            console.log(transactions);
+
+            client.commit(transactions, function (resultSet) {
+                resultSet.each(function (row) {
+                    var sourceNode = Factory.createNode(row['_aid'], row['_alabels'], row['a']);
+                    var targetNode = Factory.createNode(row['_bid'], row['_blabels'], row['b']);
+                    var relationship = Factory.createRelationship(row['_rtype'], {}, sourceNode, targetNode);
+                    graph.addLink(relationship);
+                });
+            });
         },
 
         /**

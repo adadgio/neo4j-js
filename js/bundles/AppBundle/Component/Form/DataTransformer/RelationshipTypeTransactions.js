@@ -30,8 +30,9 @@ define([
 
             var aid = parseInt(relationship._source.node._id), bid = parseInt(relationship._target.node._id);
             var query = "MATCH (a) MATCH(b) WHERE ID(a) = "+ aid +" AND ID(b) = "+ bid;
-            
-            query += " CREATE UNIQUE (a)-[r:"+ relationship._type +"]->(b) RETURN r";
+
+            query += " CREATE UNIQUE (a)-[r:"+ relationship._type +"]->(b)"
+            query += " RETURN ID(a) AS _aid, ID(b) AS _bid, type(r) AS _rtype, labels(a) AS _alabels, labels(b) AS _blabels";
 
             return {
                 query:  query,

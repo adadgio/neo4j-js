@@ -9,7 +9,8 @@ define([
 
     // templates
     var form  = 'form#node-search',
-        input = 'form#node-search input[name="s"]';
+        input = 'form#node-search input[name="s"]',
+        level = 'form#node-search select[name="r"]';
 
     return {
         bind: function (options) {
@@ -19,8 +20,10 @@ define([
                 e.preventDefault();
 
                 // count number of properties
-                var text = $(input).val();
-                _self.search(text);
+                var text  = $(input).val(),
+                    level = parseInt($(level).val());
+                // console.log($(level));
+                _self.search(text, 1);
             });
 
             // typeahead binding
@@ -59,9 +62,9 @@ define([
         /**
          * Dispatch the search event when the form is submitted.
          */
-        search: function (text) {
+        search: function (text, level) {
             // create query string from SimpleQueryLanguage
-            var queryString = SimpleQueryLanguage.translate(text);
+            var queryString = SimpleQueryLanguage.translate(text, level);
 
             var transactions = new Transactions();
             transactions.add(queryString, {});

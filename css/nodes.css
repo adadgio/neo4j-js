@@ -50,7 +50,7 @@ text.label {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     baseline-shift: -3px;
-    text-anchor: middle;
+    text-anchor: start;
 }
 
 /* Actions, modifications and overridings */

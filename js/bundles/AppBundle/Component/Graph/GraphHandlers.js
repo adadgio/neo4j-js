@@ -107,7 +107,6 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
             // check the "d" is a node (its the event target)
 
             if (typeof(d._id) == 'undefined' || parseInt(d._id) === 0) {
-                // console.log(d3.event.target);
                 return;
             }
 
@@ -122,7 +121,7 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
 
             return;
         },
-
+        
         /**
          * Only happend in create mode
          */
@@ -131,11 +130,10 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
             if (!_g.components.dragline) { return false; }
 
             var element = d3.event.target;
-            
-            console.log($(element).prop('tagName'));
-            if ($(element).prop('tagName') === 'text') {
-                // then circle is the parent child <circle>?
-            }
+
+            // if ($(element).prop('tagName') === 'text') {
+            //     // then circle is the parent child <circle>?
+            // }
             if ($(element).prop('tagName') !== 'circle') {
                 _g.components.dragline.remove();
                 _g.components.dragline = false;
@@ -144,6 +142,13 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
 
             var sourceId = parseInt(_g.components.dragline.attr('data-source'));
             var targetId = parseInt($(element).attr('data-id')); //this it the node target id !:-)
+
+            // cant create self relationships !
+            if (sourceId === targetId) {
+                _g.components.dragline.remove();
+                _g.components.dragline = false;
+                return false;
+            }
 
             // remove the dragline...
             _g.components.dragline.remove();

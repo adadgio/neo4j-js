@@ -20,7 +20,7 @@ define(function () {
                 return this[func].call(this, args);
             }
         },
-        
+
         /**
          * Creates the hidden drag line when linking two nodes
          */
@@ -58,6 +58,25 @@ define(function () {
                 .attr("class", "cursor");
 
             return cursor;
+        },
+
+        /**
+         *
+         */
+        createArrowMarker: function (_g) {
+            var marker = _g.svg.append("defs").append("marker")
+                .attr("id", "arrow-marker")
+                .attr("class", "arrow-marker")
+                .attr("viewBox", "0 0 10 10")
+                .attr("refX", 0)
+                .attr("refY", 5)
+                .attr("markerWidth", 4)
+                .attr("markerHeight", 4)
+                .attr("orient", "auto")
+                .append("path")
+                .attr("d", "M 0 0 L 10 5 L 0 10 z");
+
+            return marker;
         },
 
         /**

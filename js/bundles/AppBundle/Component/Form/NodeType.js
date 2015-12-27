@@ -47,6 +47,20 @@ define([
         },
 
         /**
+         * Show the form
+         */
+        show: function () {
+            $(form).hide();
+        },
+
+        /**
+         * Hide the form
+         */
+        hide: function () {
+            $(form).show();
+        },
+
+        /**
          * Get element of a form
          * @param string   Where to render the template
          * @param object   A Node Object create with the Factory

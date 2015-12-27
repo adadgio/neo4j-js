@@ -38,3 +38,7 @@ path.dragline {
 line {
     stroke: red;
 }
+
+.arrow-marker {
+    fill: #dedede;
+}

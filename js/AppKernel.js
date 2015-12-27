@@ -44,7 +44,7 @@ require(["bootstrap", "framework/Config/GlobalConfig", "framework/Component/Auto
         // thanks to the framework autoloader, define a list of possible names (arbitrary)
         // that might correspond to a div [data-require="name"]. If found, the Autoloader.js
         var myAutoloader = new Autoloader(GlobalConfig.globalBundles).init();
-
+        
         /**
          * Load bundles init(s) here
          */

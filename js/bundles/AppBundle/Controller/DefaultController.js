@@ -28,10 +28,10 @@ define([
          */
         addEventListeners: function () {
             var _self = this;
-            
+
             // Listener.on('config:open', function (element, event) {
             //     _self.fs.read('config.txt', function (data) {
-            //         console.log(data);
+            //        
             //     });
             // });
         },

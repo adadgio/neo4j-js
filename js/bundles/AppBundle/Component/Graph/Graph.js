@@ -56,7 +56,6 @@ define([
                 GraphHandlers.graphOnMouseUp(_g, d3.mouse(this));
                 // check if in create mode: when a dragline is mouseupped
                 var createRelationship = GraphHandlers.onGraphRelationshipMouseUpCreate(_g);
-                console.log(createRelationship);
                 if (createRelationship) {
                     $(_g.selector).trigger('relationship:create:promise', [{source: createRelationship.source, target: createRelationship.target}]);
                 }
@@ -92,11 +91,14 @@ define([
             .charge(-200).linkDistance(80).size([_g.width, _g.height])
             .on('tick', _g.tick);
 
-        _g.nodes = _g.force.nodes();
         _g.links = _g.force.links();
         _g.link  = _g.svg.selectAll(".link");
+        _g.nodes = _g.force.nodes();
         _g.node  = _g.svg.selectAll(".node", function (d) { return d._id; });
         _g.gnode = _g.svg.selectAll(".gnode");
+
+        // add arrow marker
+        GraphComponents.createArrowMarker(_g);
 
         // differentiate dblclick an click events
         var down,
@@ -247,9 +249,10 @@ define([
         _self.update = function () {
             _g.link  = _g.link.data(_g.links);
             _g.node  = _g.node.data(_g.nodes, function (d) { return d._id; });
-
+            
             _g.link.enter().append('line')
                 .attr('class', 'link')
+                .attr('marker-end', 'url(#arrow-marker)')
                 .style('stroke-width', function(d) { return Math.sqrt(d.value); });
 
             _g.gnodes = _g.node.enter().append("g")
@@ -313,9 +316,9 @@ define([
             _g.link.exit().remove();
             _g.node.exit().remove();
 
-            // _g.gnodes.append("circle")
-            //     .attr('class', 'ring')
-            //     .attr("r", 23);
+            _g.gnodes.append("circle")
+                .attr('class', 'ring')
+                .attr("r", 23);
 
             _g.gnodes.append("circle")
                 .attr('data-id', function (d) { return d._id; })
@@ -430,10 +433,15 @@ define([
         _self.enableDragging = function () {
             _g.state.dragging = true;
 
-            d3.selectAll('g.gnode')
-                .on('touchstart.drag', _g.events.memory.touchstartDrag)
-                .on('mousedown.drag', _g.events.memory.mousedownDrag)
-                .call(_g.force.drag);
+            // try {
+                d3.selectAll('g.gnode')
+                    .on('touchstart.drag', _g.events.memory.touchstartDrag)
+                    .on('mousedown.drag', _g.events.memory.mousedownDrag)
+                    .call(_g.force.drag);
+            // } catch (e) {
+            //     console.log('@todo Remove that ugly try/catch and handle the error. It happens when crete mode is enabled with no node on the graph?')
+            // }
+
         };
 
         /**
@@ -442,19 +450,16 @@ define([
         _self.disableDragging = function () {
             _g.state.dragging = false;
             // save all events to re-attach them later
-            if (_g.gnodes[0].length > 0) {
-                _g.events.memory = {
-                    touchstartDrag: _g.gnodes.on('touchstart.drag'),
-                    mousedownDrag: _g.gnodes.on('mousedown.drag'),
-                }
+
+            // save previous default drag event in memory to be re-enabled when
+            //  create mode will be deactivated by the user
+            _g.events.memory = {
+                touchstartDrag: d3.selectAll('g.gnode').on('touchstart.drag'),
+                mousedownDrag: d3.selectAll('g.gnode').on('mousedown.drag'),
             }
 
-            // attach new events handlers on drag for creating
-            // relationships in create mode
-            // d3.selectAll('g.gnode')
-            //     .on('touchstart.drag', null)
-            //     .on('mousedown.drag', null)
-            // ;
+            // attach new event handlers to drag events to create
+            // relationships and prevent default drag event
             d3.selectAll('g.gnode')
                 .on('touchstart.drag', function (e) {
                     // nothing to do here

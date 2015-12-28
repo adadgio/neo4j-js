@@ -1,5 +1,5 @@
 /**
- * NodeSearcType form
+ * NodeSearchType form
  */
 define([
     'framework/Component/Neo4j/Transactions',
@@ -8,9 +8,9 @@ define([
 'use strict';
 
     // templates
-    var form  = 'form#node-search',
-        input = 'form#node-search input[name="s"]',
-        level = 'form#node-search select[name="r"]';
+    var form   = 'form#node-search',
+        input  = 'form#node-search input[name="s"]',
+        select = 'form#node-search select[name="r"]';
 
     return {
         bind: function (options) {
@@ -21,11 +21,11 @@ define([
 
                 // count number of properties
                 var text  = $(input).val(),
-                    level = parseInt($(level).val());
+                    level = parseInt($(select).val());
                 // console.log($(level));
-                _self.search(text, 1);
+                _self.search(text, level);
             });
-
+            
             // typeahead binding
             $(input).typeahead({
                 autoSelect: true,

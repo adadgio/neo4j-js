@@ -2,6 +2,7 @@
  * @namespace \bundles\AppBundle\Controller\
  */
 define([
+    'templating',
     'framework/Component/Neo4j/Client',
     'framework/Component/Neo4j/Transactions',
     'framework/Component/Neo4j/Factory',
@@ -9,8 +10,11 @@ define([
     'bundles/AppBundle/Component/Form/NodeType',
     'bundles/AppBundle/Component/Form/RelationshipType',
     'bundles/AppBundle/Component/Form/NodeSearchType',
-], function (Neo4jClient, Transactions, Factory, Graph, NodeType, RelationshipType, NodeSearchType) {
+], function (Templating, Neo4jClient, Transactions, Factory, Graph, NodeType, RelationshipType, NodeSearchType) {
 'use strict';
+
+    var ready = false,
+        body  = $('body');
 
     var graph = new Graph('svg#map');
 
@@ -23,8 +27,11 @@ define([
         /**
          * Create mode switch selector
          */
+        readyState:       '#ready',
         createModeSwitch: 'a[data-toggle="create-mode"]',
-        defaultsFormPanel: 'div#create-mode-defaults-form',
+        defaultsFormPanel: 'div#create-mode-defaults',
+        defaultsFormLabels: 'form[data-type="form-defaults-node"]',
+        defaultsFormRelationships: 'form[data-type="form-defaults-relationships"]',
 
         /**
          * Constructor
@@ -35,6 +42,9 @@ define([
 
             // bind search node(s) form
             NodeSearchType.bind();
+
+            // must be done before events listeners
+            this.initalizeDefaults();
 
             // main event listeners
             this.addEventListeners();
@@ -49,6 +59,11 @@ define([
         addEventListeners: function () {
             var _self = this,
                 modal = $('div#modal');
+                
+            body.on('ui:ready', function (e) {
+                ready = true;
+                $(_self.readyState).removeClass('not-ready').addClass('ready');
+            });
 
             $(this.createModeSwitch).unbind('click').bind('click', {self:this}, function (e) {
                 e.preventDefault();
@@ -80,6 +95,29 @@ define([
 
             NodeSearchType.getForm().on('node:search:submit', function (e, transactions) {
                 _self.onNodeSearchPostSubmit(transactions);
+            });
+        },
+
+        /**
+         * Initalisze forms default forms on main template.
+         */
+        initalizeDefaults: function () {
+            var _self = this;
+
+            // fill the default form values
+            $.get('templates/form/defaults_labels.tpl', function(data) {
+                var template = Templating.compile(data);
+                var html = template({mappedLabels: Settings.graph.label});
+                $(_self.defaultsFormLabels).find('select[name="default_labels"]').html(html);
+
+                // then get relationship defaults
+                $.get('templates/form/defaults_relationships.tpl', function(data) {
+                    var template = Templating.compile(data);
+                    var html = template({mappedRelationships: Settings.graph.relationship});
+                    $(_self.defaultsFormRelationships).find('select[name="default_types"]').html(html);
+
+                    body.trigger('ui:ready', []);
+                });
             });
         },
 
@@ -123,7 +161,7 @@ define([
                     if (typeof(row['r']) !== 'undefined' && typeof(row['b']) !== 'undefined') {
                         var nodeB = Factory.createNode(row['_bid'], row['_blabels'], row['b']);
                         graph.addNode(nodeB);
-                        
+
                         graph.addLink(
                             Factory.createRelationship(row['_rtype'], {}, nodeA, nodeB)
                         );

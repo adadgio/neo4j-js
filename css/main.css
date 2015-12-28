@@ -17,3 +17,18 @@ a:hover {
 div#create-mode-defaults-form {
     display: none;
 }
+
+.is-ready {
+
+}
+.is-ready > i.fa {
+    color: inherit;
+    font-size: 1.3em;
+    line-height: 1em;
+}
+.is-ready.not-ready {
+    color: red !important;
+}
+.is-ready.ready {
+    color: green !important;
+}

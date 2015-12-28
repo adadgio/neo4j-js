@@ -30,8 +30,8 @@ Check the first demo here :
 ## Going further
 
 ### Note
-This project relies on requireJS and on the awesome [melody-js](https://github.com/adadgio/melody-js) framework which
-replicates a Symfony2 like organization in Javascript while implement ADM architecture (it rocks).
+This project relies on requireJS and on the [melody-js](https://github.com/adadgio/melody-js) framework that
+replicates a Symfony2 like organization in JS while implement ADM architecture.
 
 It also relies on the great [d3js](http://d3js.org) library so you might want to be confortable with that before modifying things in deep.
 

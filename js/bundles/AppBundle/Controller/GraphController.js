@@ -240,7 +240,7 @@ define([
                 // now add it the the graph !:-)
             });
         },
-
+        
         /**
          * Triggered when a dragline is successfully dragged between
          * two nodes to create a relationship from source node to target node.

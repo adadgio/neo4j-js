@@ -59,7 +59,7 @@ define([
         addEventListeners: function () {
             var _self = this,
                 modal = $('div#modal');
-                
+
             body.on('ui:ready', function (e) {
                 ready = true;
                 $(_self.readyState).removeClass('not-ready').addClass('ready');
@@ -223,8 +223,11 @@ define([
         onNodeCreatePromise: function (coordinates) {
             var _self = this;
 
+            // get form node defaults label
+            var defaultLabel = $(this.defaultsFormLabels).find('select[name="default_labels"]').val();
+
             // create a new node using the factory with no _id, no _labels and no _properties
-            var node = Factory.createNode(null, ["Hey","Joe"], {blugr:"kjq"});
+            var node = Factory.createNode(null, [defaultLabel], {});
             var transactions = NodeType.getTransactions(node);
 
             client.commit(transactions, function (resultSet) {
@@ -245,7 +248,10 @@ define([
         onRelationshipCreatePromise: function (data) {
             var _self = this;
 
-            var relationship = Factory.createRelationship('TEST_REL', {}, data.source, data.target);
+            // get form node defaults relationship type
+            var defaultReltype = $(this.defaultsFormRelationships).find('select[name="default_types"]').val();
+
+            var relationship = Factory.createRelationship(defaultReltype, {}, data.source, data.target);
             var transactions = RelationshipType.getTransactions(relationship);
 
             client.commit(transactions, function (resultSet) {

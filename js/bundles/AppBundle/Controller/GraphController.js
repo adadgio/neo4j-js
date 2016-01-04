@@ -54,6 +54,20 @@ define([
         },
 
         /**
+         * Ping Neo4j to check that its running
+         */
+        ping: function (callback) {
+            var transactions = new Transactions();
+            transactions.add("MATCH (n) RETURN n LIMIT 1", {});
+
+            client.commit(transactions, function (resultSet) {
+                callback(true);
+            }, function (error) {
+                callback(false)
+            });
+        },
+
+        /**
          * Add all custom events listeners.
          */
         addEventListeners: function () {
@@ -62,7 +76,13 @@ define([
 
             body.on('ui:ready', function (e) {
                 ready = true;
+                $(_self.readyState).attr('title', 'Neo4j is running');
                 $(_self.readyState).removeClass('not-ready').addClass('ready');
+            });
+            body.on('ui:error', function (e) {
+                ready = false;
+                $(_self.readyState).attr('title', 'Neo4j is probably not running');
+                $(_self.readyState).removeClass('ready').addClass('not-ready');
             });
 
             $(this.createModeSwitch).unbind('click').bind('click', {self:this}, function (e) {
@@ -116,7 +136,16 @@ define([
                     var html = template({mappedRelationships: Settings.graph.relationship});
                     $(_self.defaultsFormRelationships).find('select[name="default_types"]').html(html);
 
-                    body.trigger('ui:ready', []);
+                    // do a ping
+                    _self.ping(function (isOkay) {
+                        if (isOkay === true) {
+                            body.trigger('ui:ready', []);
+                        } else {
+                            body.trigger('ui:error', []);
+                        }
+                    });
+
+
                 });
             });
         },
@@ -240,7 +269,7 @@ define([
                 // now add it the the graph !:-)
             });
         },
-        
+
         /**
          * Triggered when a dragline is successfully dragged between
          * two nodes to create a relationship from source node to target node.

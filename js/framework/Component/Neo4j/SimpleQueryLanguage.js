@@ -43,9 +43,7 @@ define(function () {
             } else {
                 queryString += ") RETURN a, ID(a) AS _aid, labels(a) AS _alabels LIMIT 60";
             }
-
-            // close query string
-            console.log(queryString);
+            
             return queryString;
         }
 

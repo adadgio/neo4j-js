@@ -10,7 +10,7 @@ define(['framework/Component/Neo4j/ResultSet', 'framework/Config/GlobalConfig'],
         $.ajaxSetup({
             headers: { "Authorization": options.authBasic }
         });
-        
+
         return {
 
             /**
@@ -18,7 +18,7 @@ define(['framework/Component/Neo4j/ResultSet', 'framework/Config/GlobalConfig'],
              * @param array Statements as cypher queries
              * @param function Callback function
              */
-            commit: function (transactions, callback) {
+            commit: function (transactions, callback, error) {
                 var _self = this,
                     data  = JSON.stringify(transactions.getStatements());
 
@@ -34,7 +34,9 @@ define(['framework/Component/Neo4j/ResultSet', 'framework/Config/GlobalConfig'],
                         callback.apply(null, _self.handleTransactionsResults(response));
                     },
                     error: function(x,t,e){
-                        callback(response);
+                        if (typeof(error) === 'function') {
+                            error('An error occured while executing the request');
+                        }
                     }
                 });
             },

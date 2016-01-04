@@ -249,7 +249,7 @@ define([
         _self.update = function () {
             _g.link  = _g.link.data(_g.links);
             _g.node  = _g.node.data(_g.nodes, function (d) { return d._id; });
-            
+
             _g.link.enter().append('line')
                 .attr('class', 'link')
                 .attr('marker-end', 'url(#arrow-marker)')
@@ -390,6 +390,16 @@ define([
         _self.init = function () {
             _self.update();
             // _self.bindInterface();
+        };
+        /**
+         * Enable create mode ON
+         */
+        _self.toggleCreateMode = function () {
+            if (_g.state.create === true) {
+                _self.disableCreateMode();
+            } else {
+                _self.enableCreateMode();
+            }
         };
 
         /**

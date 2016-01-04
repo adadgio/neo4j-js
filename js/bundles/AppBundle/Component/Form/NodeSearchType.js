@@ -22,10 +22,10 @@ define([
                 // count number of properties
                 var text  = $(input).val(),
                     level = parseInt($(select).val());
-                // console.log($(level));
+                
                 _self.search(text, level);
             });
-            
+
             // typeahead binding
             $(input).typeahead({
                 autoSelect: true,

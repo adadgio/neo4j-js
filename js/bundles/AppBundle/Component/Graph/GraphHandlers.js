@@ -1,11 +1,16 @@
 /**
  * Graph components (for clearer code)
  */
-define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphComponents) {
+define([
+    'framework/Component/Util',
+    'bundles/AppBundle/Component/Graph/GraphComponents',
+], function (Util, GraphComponents) {
 'use strict';
     var mouseTimer = false;
 
     return {
+        keyDowns: [],
+
         /**
          * Tolerance to determine a link or short click
          */
@@ -32,19 +37,27 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
             // fix all nodes
             // @todo To keep what the user as dragged as fixed, select here only nodes that do not have the class "fixed" (easy)
             _g.svg.selectAll('.gnode').classed('fixed', function (d) {  d.fixed = false; return false; });
+
+            // reset keydowns
+            this.keyDowns = [];
         },
 
         /**
          * Happens on key pressed
          */
         windowOnKeyDown: function (e, _g) {
-            if(d3.event.keyCode === 68) {
-                _g.state.currentKeyPressed = 'D'; // the "d" fro drag key was pressed
+            // add keydowns
+            this.keyDowns.push(d3.event.keyCode);
 
+            if (d3.event.keyCode === 68) {
+                _g.state.currentKeyPressed = 'D'; // the "d" fro drag key was pressed
                 // enable drag events in that case ! :-)
                 _g.svg.selectAll('.gnode').classed('fixed', function (d) {  d.fixed = true; return true; });
-
-                // stop dragging capability, instead use dragging to create links ! :-)
+            }
+            
+            // CTRL+C: toggle create mode
+            if (Util.inArray(17, this.keyDowns) && Util.inArray(67, this.keyDowns)) {
+                console.log('Should disable create mode but it is not working');
             }
         },
 
@@ -121,7 +134,7 @@ define(['bundles/AppBundle/Component/Graph/GraphComponents',], function (GraphCo
 
             return;
         },
-        
+
         /**
          * Only happend in create mode
          */

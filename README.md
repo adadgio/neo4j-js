@@ -20,7 +20,7 @@ Check the first demo here :
 - Create a virtual host on your machine or server.
 - Point the virtual host to the folder where you downloaded Neo4j JS
 - Copy `settings-sample.js` to `settings.js`
-
+- Change client `authBasic` value to `Basic: <authString>`. Auth string is a base64 encode of neo4j `username:password`
 
 ## Security
 
@@ -35,12 +35,13 @@ Check the first demo here :
 ## Going further
 
 ### Note
-This project relies on requireJS and on the [melody-js](https://github.com/adadgio/melody-js) framework that
-replicates a Symfony2 like organization in JS while implement ADM architecture.
+
+This project relies on requireJS and on the [melody-js](https://github.com/adadgio/melody-js) framework that replicates a Symfony2 like organization in JS while implement ADM architecture.
 
 It also relies on the great [d3js](http://d3js.org) library so you might want to be confortable with that before modifying things in deep.
 
 ### Examples
+
 The best example to see how the app works or if you want to configure it, open `bundles/AppBundle/Controller/GraphController`
 
 ### Events
@@ -89,8 +90,5 @@ onNodeCreatePromise: function (coordinates) {
 ```
 
 ## Licence
-You do absolutely what you want with that project (MIT Licence).
-=======
-# neo4j-js
 
-A Neo4j graph editor written in Javascript.
+You do absolutely what you want with that project (MIT Licence).

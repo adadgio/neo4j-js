@@ -25,12 +25,11 @@ Check the first demo here :
 ## Security
 
 - If you don't want anybody to access that interface add HTTP authentication via your Nginx or Apache server
-
 - Alternatively run a PHP server, rename index.html to index.php and setup whatever HTTP auth you like.
 
 ## Quick usage and customization
-- For quick usage, got to your virtual (or real!) host and explore the graph.
 
+- For quick usage, got to your virtual (or real!) host and explore the graph.
 
 ## Going further
 

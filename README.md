@@ -9,18 +9,23 @@ Check the first demo here :
 [![Youtube demo](https://i.ytimg.com/vi/kKJzLi-7p_U/1.jpg?time=1451155728744)](https://youtu.be/kKJzLi-7p_U)
 
 ## Installation
+
 ### Pre-requisites
+
 - Neo4j must be installed [Neo4j quick install instructions here](https://www.digitalocean.com/community/tutorials/how-to-install-neo4j-on-an-ubuntu-vps)
-- Neo4j Basic Authentication must have been configured
+- Neo4j Basic Authentication must have been configured (by default)
 
 ### Quick configuration
+
 - Create a virtual host on your machine or server.
 - Point the virtual host to the folder where you downloaded Neo4j JS
-- Open `bundles/AppBundle/Resources/Config/Mapping` and edit Neo4j endpoint and basic Auth
-- ... additionally configure colors or whatever suits you
+- Copy `settings-sample.js` to `settings.js`
+
 
 ## Security
+
 - If you don't want anybody to access that interface add HTTP authentication via your Nginx or Apache server
+
 - Alternatively run a PHP server, rename index.html to index.php and setup whatever HTTP auth you like.
 
 ## Quick usage and customization

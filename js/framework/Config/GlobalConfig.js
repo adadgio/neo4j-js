@@ -86,7 +86,7 @@ define(['framework/Component/Util'], function (Util) {
             if (typeof type == 'undefined') {
                 var type = 'info';
             }
-            
+
             var color, prefix = type+':';
             switch (type) {
                 case 'info':    color = '#474747'; break;

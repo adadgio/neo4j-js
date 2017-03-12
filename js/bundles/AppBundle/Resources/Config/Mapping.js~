@@ -6,12 +6,12 @@ define(function () {
     return {
         client: {
             apiEndpoint: "http://127.0.0.1:7474/db/data",
-            authBasic:   "Basic bmVvNGo6ZnJlbmNoZnJvZw==",
+            authBasic:   "Basic qwerty==", // change this
         },
         node: {
             _id: '_id',
             _labels: '_labels',
-            labels: ['Specialty', 'Page', 'Profesion', 'Document'],
+            labels: ['Truc', 'Person'],
             properties: {
                 id: 'integer',
                 name: 'string',
@@ -30,12 +30,8 @@ define(function () {
             primaryLabel: 'name',
         },
         colors: {
-            Truc:       'green',
-            Machin:     'red',
-            Specialty:  'red',
-            Person:     'violet',
-            Page:       'green',
-            Document:   'gray',
+            Truc:   'green',
+            Person: 'violet',
         },
     };
 });

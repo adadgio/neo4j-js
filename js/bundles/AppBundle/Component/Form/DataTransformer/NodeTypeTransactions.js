@@ -60,9 +60,9 @@ define([
         buildUpdateQuery: function (node) {
             var params = {props: {}};
             var query = "MATCH (n) WHERE ID(n) = " + parseInt(node._id);
-
+            
             // delete and reset labels (first remove ALL label from the node, there is no ither way)
-            query += " REMOVE n:" + Settings.graph.label.types.join(':');
+            query += " REMOVE n:" + Settings.graph.labels.types.join(':');
             if (node._labels.length > 0) {
                 query += " SET n:" + node._labels.join(':');
             }

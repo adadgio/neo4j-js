@@ -327,8 +327,8 @@ define([
                     // find color
                     if (d._labels.length > 0) {
                         var firstLabel = d._labels[0];
-                        if (typeof(Settings.graph.label.colors[firstLabel]) !== 'undefined') {
-                            var color = Settings.graph.label.colors[firstLabel];
+                        if (typeof(Settings.graph.labels.colors[firstLabel]) !== 'undefined') {
+                            var color = Settings.graph.labels.colors[firstLabel];
                             klass += " "+color;
                         }
                     }

@@ -127,15 +127,17 @@ define([
             // fill the default form values
             $.get('templates/form/defaults_labels.tpl', function(data) {
                 var template = Templating.compile(data);
-                var html = template({mappedLabels: Settings.graph.label});
-                $(_self.defaultsFormLabels).find('select[name="default_labels"]').html(html);
+                var html = template({ mappedLabels: Settings.graph.labels });
+
+                let select = $(_self.defaultsFormLabels).find('select[name="default_labels"]');
+                select.html(html);
 
                 // then get relationship defaults
                 $.get('templates/form/defaults_relationships.tpl', function(data) {
                     var template = Templating.compile(data);
-                    var html = template({mappedRelationships: Settings.graph.relationship});
+                    var html = template({ mappedRelationships: Settings.graph.relationships });
                     $(_self.defaultsFormRelationships).find('select[name="default_types"]').html(html);
-
+                    
                     // do a ping
                     _self.ping(function (isOkay) {
                         if (isOkay === true) {

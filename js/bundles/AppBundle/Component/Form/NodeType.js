@@ -73,8 +73,8 @@ define([
 
             $.get(template, function(data) {
                 var template = Templating.compile(data);
-                var html = template({node: node, mappedProperties: Settings.graph.node.properties, mappedLabels: Settings.graph.label});
-
+                var html = template({node: node, mappedProperties: Settings.graph.nodes.properties, mappedLabels: Settings.graph.label });
+                
                 $(selector).html(html);
                 $(nid).text('[' + node._id + ']');
                 $(loader).addClass('hidden');
@@ -98,7 +98,7 @@ define([
 
             $.get('templates/form/node_property.tpl', function(data) {
                 var template = Templating.compile(data);
-                var html = template({index: index,  mappedProperties: Settings.graph.node.properties});
+                var html = template({index: index,  mappedProperties: Settings.graph.nodes.properties});
 
                 $(properties).append(html);
                 $(loader).addClass('hidden');

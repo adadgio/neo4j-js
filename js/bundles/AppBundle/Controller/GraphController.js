@@ -123,7 +123,7 @@ define([
          */
         initalizeDefaults: function () {
             var _self = this;
-
+            
             // fill the default form values
             $.get('templates/form/defaults_labels.tpl', function(data) {
                 var template = Templating.compile(data);
@@ -137,7 +137,7 @@ define([
                     var template = Templating.compile(data);
                     var html = template({ mappedRelationships: Settings.graph.relationships });
                     $(_self.defaultsFormRelationships).find('select[name="default_types"]').html(html);
-                    
+
                     // do a ping
                     _self.ping(function (isOkay) {
                         if (isOkay === true) {

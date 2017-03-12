@@ -29,7 +29,11 @@ define([
                 dragline: false,
             },
             events: {
-                memory: {},
+                memory: {
+                    touchstartDrag: null,
+                    mousedownDrag: null,
+
+                },
                 dragPosition:{x: 0, y: 0},
             },
             state: {
@@ -442,35 +446,41 @@ define([
          */
         _self.enableDragging = function () {
             _g.state.dragging = true;
+            let nodes = d3.selectAll('g.gnode');
 
             // try {
-                d3.selectAll('g.gnode')
+                nodes
                     .on('touchstart.drag', _g.events.memory.touchstartDrag)
                     .on('mousedown.drag', _g.events.memory.mousedownDrag)
                     .call(_g.force.drag);
             // } catch (e) {
             //     console.log('@todo Remove that ugly try/catch and handle the error. It happens when crete mode is enabled with no node on the graph?')
             // }
-
         };
 
         /**
-         * Disable node draggins
+         * Disable nodes dragging
          */
         _self.disableDragging = function () {
             _g.state.dragging = false;
             // save all events to re-attach them later
 
-            // save previous default drag event in memory to be re-enabled when
-            //  create mode will be deactivated by the user
-            _g.events.memory = {
-                touchstartDrag: d3.selectAll('g.gnode').on('touchstart.drag'),
-                mousedownDrag: d3.selectAll('g.gnode').on('mousedown.drag'),
+            // cant enable drag touch on empty nodes selection (d3)
+            let nodes = d3.selectAll('g.gnode');
+            
+            // @todo There is a small problem here
+            if (nodes[0].length > 0) {
+                // save previous default drag event in memory to be re-enabled when
+                // create mode will be deactivated by the user
+                _g.events.memory = {
+                    touchstartDrag: nodes.on('touchstart.drag'),
+                    mousedownDrag: nodes.on('mousedown.drag'),
+                }
             }
 
             // attach new event handlers to drag events to create
             // relationships and prevent default drag event
-            d3.selectAll('g.gnode')
+            nodes
                 .on('touchstart.drag', function (e) {
                     // nothing to do here
                 })

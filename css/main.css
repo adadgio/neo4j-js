@@ -17,7 +17,15 @@ a:hover {
 div#create-mode-defaults-form {
     display: none;
 }
-
+.debug {
+    color: #a5a5a5;
+    font-size: 11px;
+    white-space: pre;
+    font-family: monospace, "Monospace Sans";
+    background-color: #464545;
+    padding: 0.6em 1em;
+    border-radius: 4px;
+}
 .is-ready {
 
 }
@@ -31,4 +39,10 @@ div#create-mode-defaults-form {
 }
 .is-ready.ready {
     color: green !important;
+}
+.space-before {
+    margin-top: 16px;
+}
+.space-after {
+    margin-bottom: 16px;
 }

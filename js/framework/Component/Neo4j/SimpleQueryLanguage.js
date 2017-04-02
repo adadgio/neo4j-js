@@ -1,7 +1,7 @@
 /**
  * SimpleQueryLanguage
  */
-define(function () {
+define(['bundles/AppBundle/Component/Debug'],function (Debug) {
     return {
 
         /**
@@ -44,6 +44,7 @@ define(function () {
                 queryString += ") RETURN a, ID(a) AS _aid, labels(a) AS _alabels LIMIT 60";
             }
             
+            Debug.push(queryString);
             return queryString;
         }
 

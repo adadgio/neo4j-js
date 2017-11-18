@@ -79,7 +79,7 @@ define([
             
             $.get(template, function(data) {
                 var template = Templating.compile(data);
-                var html = template({node: node, mappedProperties: Settings.graph.nodes.properties, mappedLabels: Settings.graph.label });
+                var html = template({node: node, mappedProperties: Settings.graph.nodes.properties, mappedLabels: Settings.graph.labels });
 
                 $(selector).html(html);
                 $(nid).text('[' + node._id + ']');

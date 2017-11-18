@@ -23,7 +23,8 @@ define([
                 var text  = $(input).val(),
                     level = parseInt($(select).val());
                 
-                _self.search(text, level);
+                var limit = parseInt($('form#node-search input[name="limit"]').val());
+                _self.search(text, level, limit);
             });
 
             // typeahead binding

@@ -7,7 +7,7 @@ define(['bundles/AppBundle/Component/Debug'],function (Debug) {
         /**
          * :Page name=test
          */
-        translate: function (string, level) {
+        translate: function (string, level, limit) {
             // find if there is/are label(s)
             var labels = "";
             var properties  = [];
@@ -39,9 +39,9 @@ define(['bundles/AppBundle/Component/Debug'],function (Debug) {
 
             // @todo only level one of relationships is supported
             if (level === 1) {
-                queryString += ")-[r]->(b) RETURN a, ID(a) AS _aid, labels(a) AS _alabels, r, type(r) AS _rtype, b, ID(b) AS _bid, labels(b) AS _blabels LIMIT 60";
+                queryString += ")-[r]->(b) RETURN a, ID(a) AS _aid, labels(a) AS _alabels, r, type(r) AS _rtype, b, ID(b) AS _bid, labels(b) AS _blabels LIMIT "+limit;
             } else {
-                queryString += ") RETURN a, ID(a) AS _aid, labels(a) AS _alabels LIMIT 60";
+                queryString += ") RETURN a, ID(a) AS _aid, labels(a) AS _alabels LIMIT "+limit;
             }
             
             Debug.push(queryString);

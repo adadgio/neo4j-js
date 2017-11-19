@@ -4,8 +4,9 @@
 define([
     'templating',
     'framework/Component/Neo4j/Factory',
+    'bundles/AppBundle/Component/Debug',
     'bundles/AppBundle/Component/Form/DataTransformer/NodeTypeTransactions'
-], function (Templating, Factory, NodeTypeTransactions) {
+], function (Templating, Factory, Debug, NodeTypeTransactions) {
 'use strict';
 
     var _id  = null;
@@ -70,11 +71,16 @@ define([
             var _self = this;
 
             $(loader).removeClass('hidden');
-
+            let unmapped = this.getUnmappedProperties(node, Settings.graph.nodes.properties);
+            if (unmapped.length > 0) {
+                let debug = 'Unmapped properties found in node ['+node._labels.join(',')+']: ' + unmapped.join(', ');
+                Debug.push(debug);
+            }
+            
             $.get(template, function(data) {
                 var template = Templating.compile(data);
-                var html = template({node: node, mappedProperties: Settings.graph.nodes.properties, mappedLabels: Settings.graph.label });
-                
+                var html = template({node: node, mappedProperties: Settings.graph.nodes.properties, mappedLabels: Settings.graph.labels });
+
                 $(selector).html(html);
                 $(nid).text('[' + node._id + ']');
                 $(loader).addClass('hidden');
@@ -87,6 +93,16 @@ define([
                         callback(e);
                     });
             });
+        },
+
+        getUnmappedProperties(node, mappedProperties) {
+            let unmapped = [];
+            for (let prop in node._properties) {
+                if (typeof(mappedProperties[prop]) === 'undefined' && node._properties.hasOwnProperty(prop)) {
+                    unmapped.push(prop);
+                }
+            }
+            return unmapped;
         },
 
         /**

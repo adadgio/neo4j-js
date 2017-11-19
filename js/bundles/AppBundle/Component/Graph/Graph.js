@@ -346,13 +346,13 @@ define([
                 .text(function(d) {
                     var idField  = Settings.graph._id;
                     var prop = Settings.graph.primaryLabel;
-
-                    return d._properties.name;
-                    // if (typeof(d._properties[prop]) === 'undefined') {
-                    //     return d[idField];
-                    // } else {
-                    //     return d._properties[prop];
-                    // }
+                    
+                    if (typeof(d._properties[prop]) === 'undefined') {
+                        console.warn('Please configure Settings.graph.primaryLabels in settings.js')
+                        return d[idField];
+                    } else {
+                        return d._properties[prop];
+                    }
                 });
 
             _g.force.start();
@@ -467,7 +467,7 @@ define([
 
             // cant enable drag touch on empty nodes selection (d3)
             let nodes = d3.selectAll('g.gnode');
-            
+
             // @todo There is a small problem here
             if (nodes[0].length > 0) {
                 // save previous default drag event in memory to be re-enabled when

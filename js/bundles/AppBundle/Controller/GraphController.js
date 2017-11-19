@@ -123,7 +123,7 @@ define([
          */
         initalizeDefaults: function () {
             var _self = this;
-            
+
             // fill the default form values
             $.get('templates/form/defaults_labels.tpl', function(data) {
                 var template = Templating.compile(data);

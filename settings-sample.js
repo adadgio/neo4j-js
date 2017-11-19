@@ -4,11 +4,11 @@ Settings = {
         apiEndpoint: "http://127.0.0.1:7474/db/data",
         authBasic: "Basic qwerty==",
     },
-    
+
     graph: {
         // _id: '_id',
         // _labels: '_labels',
-        // primaryLabel: 'name',
+        primaryLabel: 'name',
         // types: ['IS_RELATED', 'MY_RELATIONSHIP'],
         nodes: {
             _id: '_id',

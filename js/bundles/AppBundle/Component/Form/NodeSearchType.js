@@ -23,7 +23,8 @@ define([
                 var text  = $(input).val(),
                     level = parseInt($(select).val());
                 
-                _self.search(text, level);
+                var limit = parseInt($('form#node-search input[name="limit"]').val());
+                _self.search(text, level, limit);
             });
 
             // typeahead binding
@@ -62,9 +63,9 @@ define([
         /**
          * Dispatch the search event when the form is submitted.
          */
-        search: function (text, level) {
+        search: function (text, level, limit) {
             // create query string from SimpleQueryLanguage
-            var queryString = SimpleQueryLanguage.translate(text, level);
+            var queryString = SimpleQueryLanguage.translate(text, level, limit);
 
             var transactions = new Transactions();
             transactions.add(queryString, {});

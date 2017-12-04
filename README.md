@@ -6,7 +6,7 @@ A Neo4j graph database explorer and admin dashboard written in Javascript.
 
 *This repository is not maintained anymore, but...*
 
-**The brand new [![Neo4j JS v2](https://github.com/adadgio/neo4j-js-ng2) version is here !**
+**The brand new [Neo4j JS v2](https://github.com/adadgio/neo4j-js-ng2) version is here !**
 
 **----------------------------------------------**
 
